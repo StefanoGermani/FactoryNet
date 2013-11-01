@@ -13,11 +13,11 @@ namespace Plant.Core
 
     public class BluePrintEventArgs : EventArgs
     {
-        private object _objectConstructed;
+        private readonly object _objectConstructed;
 
         public BluePrintEventArgs(object objectConstructed)
         {
-            this._objectConstructed = objectConstructed;
+            _objectConstructed = objectConstructed;
         }
 
         public object ObjectConstructed
@@ -34,14 +34,14 @@ namespace Plant.Core
 
     public class BasePlant
     {
-        private readonly Variations propertyVariations = new Variations();
-        private readonly Blueprints propertyBlueprints = new Blueprints();
-        private readonly Blueprints constructorBlueprints = new Blueprints();
-        private readonly CreatedBlueprints createdBluePrints = new CreatedBlueprints();
-        private readonly IDictionary<Type, CreationStrategy> creationStrategies = new Dictionary<Type, CreationStrategy>();
-        private readonly IDictionary<Type, object> postBuildActions = new Dictionary<Type, object>();
-        private readonly IDictionary<string, object> postBuildVariationActions = new Dictionary<string, object>();
-        private readonly IDictionary<Type, int> sequenceValues = new Dictionary<Type, int>();
+        private readonly Variations _propertyVariations = new Variations();
+        private readonly Blueprints _propertyBlueprints = new Blueprints();
+        private readonly Blueprints _constructorBlueprints = new Blueprints();
+        private readonly CreatedBlueprints _createdBluePrints = new CreatedBlueprints();
+        private readonly IDictionary<Type, CreationStrategy> _creationStrategies = new Dictionary<Type, CreationStrategy>();
+        private readonly IDictionary<Type, object> _postBuildActions = new Dictionary<Type, object>();
+        private readonly IDictionary<string, object> _postBuildVariationActions = new Dictionary<string, object>();
+        private readonly IDictionary<Type, int> _sequenceValues = new Dictionary<Type, int>();
 
         #region BluePrintCreated Event
 
@@ -58,7 +58,7 @@ namespace Plant.Core
         private T CreateViaProperties<T>(Properties userProperties)
         {
             var instance = CreateInstanceWithEmptyConstructor<T>();
-            SetProperties(Merge(propertyBlueprints[typeof(T)], userProperties), instance);
+            SetProperties(Merge(_propertyBlueprints[typeof(T)], userProperties), instance);
             return instance;
         }
 
@@ -67,7 +67,7 @@ namespace Plant.Core
             var type = typeof(T);
             var constructor = type.GetConstructors().First();
             var paramNames = constructor.GetParameters().Select(p => p.Name.ToLower()).ToList();
-            var defaultProperties = constructorBlueprints[type];
+            var defaultProperties = _constructorBlueprints[type];
 
             var props = Merge(defaultProperties, userProperties);
 
@@ -81,7 +81,7 @@ namespace Plant.Core
             if (property is ILazyProperty)
                 return ((ILazyProperty)property).Func.DynamicInvoke();
             if (property is ISequence)
-                return ((ISequence)property).Func.DynamicInvoke(sequenceValues[typeof(T)]++);
+                return ((ISequence)property).Func.DynamicInvoke(_sequenceValues[typeof(T)]++);
             return property;
         }
 
@@ -101,8 +101,8 @@ namespace Plant.Core
             string bluePrintKey = BluePrintKey<T>(null);
             T constructedObject;
 
-            if (createdBluePrints.ContainsKey(bluePrintKey))
-                constructedObject = (T)createdBluePrints[bluePrintKey];
+            if (_createdBluePrints.ContainsKey(bluePrintKey))
+                constructedObject = (T)_createdBluePrints[bluePrintKey];
             else
                 constructedObject = Create<T>();
 
@@ -169,21 +169,21 @@ namespace Plant.Core
                 prop.SetValue(constructedObject, value, null);
             }
 
-            UpdateProperties<T>(constructedObject, variation);
+            UpdateProperties(constructedObject, variation);
 
             string bluePrintKey = BluePrintKey<T>(variation);
 
             if (created)
                 OnBluePrintCreated(new BluePrintEventArgs(constructedObject));
 
-            if (!createdBluePrints.ContainsKey(bluePrintKey))
-                createdBluePrints.Add(bluePrintKey, constructedObject);
+            if (!_createdBluePrints.ContainsKey(bluePrintKey))
+                _createdBluePrints.Add(bluePrintKey, constructedObject);
 
-            if (postBuildActions.ContainsKey(typeof(T)))
-                ((Action<T>)postBuildActions[typeof(T)])(constructedObject);
+            if (_postBuildActions.ContainsKey(typeof(T)))
+                ((Action<T>)_postBuildActions[typeof(T)])(constructedObject);
 
-            if (postBuildVariationActions.ContainsKey(bluePrintKey))
-                ((Action<T>)postBuildVariationActions[bluePrintKey])(constructedObject);
+            if (_postBuildVariationActions.ContainsKey(bluePrintKey))
+                ((Action<T>)_postBuildVariationActions[bluePrintKey])(constructedObject);
 
             return constructedObject;
         }
@@ -198,20 +198,20 @@ namespace Plant.Core
             if (string.IsNullOrEmpty(variation))
                 return;
 
-            SetProperties(propertyVariations[BluePrintKey<T>(variation)], constructedObject);
+            SetProperties(_propertyVariations[BluePrintKey<T>(variation)], constructedObject);
         }
 
         private CreationStrategy StrategyFor<T>()
         {
-            if (creationStrategies.ContainsKey(typeof(T)))
-                return creationStrategies[typeof(T)];
+            if (_creationStrategies.ContainsKey(typeof(T)))
+                return _creationStrategies[typeof(T)];
             throw new TypeNotSetupException(string.Format("No creation strategy defined for type: {0}", typeof(T)));
         }
 
         private CreationStrategy? StrategyFor(Type t)
         {
-            if (creationStrategies.ContainsKey(t))
-                return creationStrategies[t];
+            if (_creationStrategies.ContainsKey(t))
+                return _creationStrategies[t];
             return null;
         }
 
@@ -228,11 +228,11 @@ namespace Plant.Core
                   if (value is ILazyProperty)
                       AssignLazyPropertyResult(instance, instanceProperty, value);
                   else if (value is ISequence)
-                      AssignSequenceResult(instance, instanceProperty, value, sequenceValues[typeof(T)]);
+                      AssignSequenceResult(instance, instanceProperty, value, _sequenceValues[typeof(T)]);
                   else
                       instanceProperty.SetValue(instance, value, null);
               });
-            sequenceValues[typeof(T)]++;
+            _sequenceValues[typeof(T)]++;
         }
 
         private static void AssignSequenceResult<T>(T instance, PropertyInfo instanceProperty, object value, int sequenceValue)
@@ -271,7 +271,7 @@ namespace Plant.Core
         public virtual void DefinePropertiesOf<T>(object defaults, Action<T> afterPropertyPopulation)
         {
             DefinePropertiesOf<T>(defaults);
-            postBuildActions[typeof(T)] = afterPropertyPopulation;
+            _postBuildActions[typeof(T)] = afterPropertyPopulation;
         }
 
         public virtual void DefinePropertiesOf<T>(T defaults)
@@ -282,14 +282,14 @@ namespace Plant.Core
         public virtual void DefinePropertiesOf<T>(T defaults, Action<T> afterPropertyPopulation)
         {
             DefinePropertiesOf<T>((object)defaults);
-            postBuildActions[typeof(T)] = afterPropertyPopulation;
+            _postBuildActions[typeof(T)] = afterPropertyPopulation;
         }
 
         public virtual void DefinePropertiesOf<T>(object defaults)
         {
-            creationStrategies.Add(typeof(T), CreationStrategy.Property);
-            AddDefaultsTo<T>(propertyBlueprints, defaults);
-            sequenceValues.Add(typeof(T), 0);
+            _creationStrategies.Add(typeof(T), CreationStrategy.Property);
+            AddDefaultsTo<T>(_propertyBlueprints, defaults);
+            _sequenceValues.Add(typeof(T), 0);
         }
 
         public virtual void DefineVariationOf<T>(string variation, T defaults)
@@ -300,31 +300,31 @@ namespace Plant.Core
         public virtual void DefineVariationOf<T>(string variation, T defaults, Action<T> afterPropertyPopulation)
         {
             DefineVariationOf<T>(variation, (object)defaults);
-            postBuildVariationActions[BluePrintKey<T>(variation)] = afterPropertyPopulation;
+            _postBuildVariationActions[BluePrintKey<T>(variation)] = afterPropertyPopulation;
         }
 
         public virtual void DefineVariationOf<T>(string variation, object defaults)
         {
-            propertyVariations.Add(BluePrintKey<T>(variation), ToPropertyList(defaults));
+            _propertyVariations.Add(BluePrintKey<T>(variation), ToPropertyList(defaults));
         }
 
         public virtual void DefineVariationOf<T>(string variation, object defaults, Action<T> afterPropertyPopulation)
         {
             string hash = BluePrintKey<T>(variation);
-            propertyVariations.Add(hash, ToPropertyList(defaults));
-            postBuildVariationActions[hash] = afterPropertyPopulation;
+            _propertyVariations.Add(hash, ToPropertyList(defaults));
+            _postBuildVariationActions[hash] = afterPropertyPopulation;
         }
 
         public void DefineConstructionOf<T>(object defaults, Action<T> afterCtorPopulation)
         {
             DefineConstructionOf<T>(defaults);
-            postBuildActions[typeof(T)] = afterCtorPopulation;
+            _postBuildActions[typeof(T)] = afterCtorPopulation;
         }
         public void DefineConstructionOf<T>(object defaults)
         {
-            creationStrategies.Add(typeof(T), CreationStrategy.Constructor);
-            AddDefaultsTo<T>(constructorBlueprints, defaults);
-            sequenceValues.Add(typeof(T), 0);
+            _creationStrategies.Add(typeof(T), CreationStrategy.Constructor);
+            AddDefaultsTo<T>(_constructorBlueprints, defaults);
+            _sequenceValues.Add(typeof(T), 0);
         }
 
         private void AddDefaultsTo<T>(Blueprints blueprints, object defaults)
