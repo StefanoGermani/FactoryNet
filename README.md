@@ -1,7 +1,7 @@
 Plant
 =====
 
-Plant is a test factory for .NET 4.0.  It is very much like FactoryGirl (http://github.com/thoughtbot/factory_girl/) for Ruby.  The goal of this project is to allow you to reduce noise and duplication across your tests when creating models.  
+Plant is a test factory for .NET 3.5.  It is very much like FactoryGirl (http://github.com/thoughtbot/factory_girl/) for Ruby.  The goal of this project is to allow you to reduce noise and duplication across your tests when creating models.  
 
 Download
 --------
