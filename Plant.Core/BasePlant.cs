@@ -104,12 +104,17 @@ namespace Plant.Core
         if (createdBluePrints.ContainsKey(bluePrintKey))
             constructedObject = (T)createdBluePrints[bluePrintKey];
         else
-            constructedObject = Create<T>(null, null);
+            constructedObject = Create<T>();
 
         return constructedObject;
     }
 
-    public virtual T Build<T>(string variation = null)
+    public virtual T Build<T>()
+    {
+        return Create<T>(null, null, false);
+    }
+
+    public virtual T Build<T>(string variation)
     {
         return Create<T>(null, variation, false);
     }
@@ -119,17 +124,27 @@ namespace Plant.Core
         return Create<T>((object)userSpecifiedProperties, null, false);
     }
 
+    public virtual T Create<T>()
+    {
+        return Create<T>(null, null, true);
+    }
+
     public virtual T Create<T>(string variation)
     {
-        return Create<T>(null, variation);
+        return Create<T>(null, variation, true);
     }
 
     public virtual T Create<T>(T userSpecifiedProperties)
     {
-        return Create<T>((object)userSpecifiedProperties);
+        return Create<T>(userSpecifiedProperties, null, true);
     }
 
-    public virtual T Create<T>(object userSpecifiedProperties = null, string variation = null, bool created = true)
+    public T Create<T>(object userSpecifiedProperties)
+    {
+        return Create<T>(userSpecifiedProperties, null, true);
+    }
+
+    public virtual T Create<T>(object userSpecifiedProperties, string variation, bool created)
     {
       var userSpecifiedPropertyList = ToPropertyList(userSpecifiedProperties);
 
