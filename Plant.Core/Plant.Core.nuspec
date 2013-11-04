@@ -2,17 +2,17 @@
 <package >
   <metadata>
     <id>Plant</id>
-    <version>0.1.0.0</version>
+    <version>$version$</version>
     <title>Plant</title>
-    <authors>James Brechtel</authors>
-    <projectUrl>https://github.com/jbrechtel/plant</projectUrl>
+    <authors>James Brechtel, Stefano Germani</authors>
+    <projectUrl>https://github.com/stefanogermani/plant</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Plant is a test factory for .NET 4.0. It is very much like FactoryGirl (http://github.com/thoughtbot/factory_girl/) for Ruby. The goal of this project is to allow you to reduce noise and duplication across your tests when creating models.</description>
+    <description>Plant is a test factory for .NET 3.5. It is very much like FactoryGirl (http://github.com/thoughtbot/factory_girl/) for Ruby. The goal of this project is to allow you to reduce noise and duplication across your tests when creating models.</description>
     <summary>A generic helper factory for .NET</summary>
-    <copyright>Copyright 2012</copyright>
+    <copyright>Copyright 2013</copyright>
     <tags>test factory blueprint factory_girl</tags>
   </metadata>
   <files>
-    <file src="bin\Release\Plant.Core.dll" target="lib\net40" />
+    <file src="bin\Release\Plant.Core.dll" target="lib\net35" />
   </files>
  </package>
