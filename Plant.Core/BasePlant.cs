@@ -335,7 +335,7 @@ namespace Plant.Core
         private IDictionary<PropertyData, object> ToPropertyList(object obj)
         {
             if (obj == null) return new Dictionary<PropertyData, object>();
-            return obj.GetType().GetProperties().ToDictionary(prop => new PropertyData(prop), prop => prop.GetValue(obj, null));
+            return obj.GetType().GetProperties(BindingFlags.SetProperty).ToDictionary(prop => new PropertyData(prop), prop => prop.GetValue(obj, null));
         }
 
         public BasePlant WithBlueprintsFromAssemblyOf<T>()

@@ -26,6 +26,14 @@ namespace Plant.Tests
         }
 
         [Test]
+        public void Should_Not_Evaluate_Property_Without_Setter()
+        {
+            var plant = new BasePlant();
+            Assert.DoesNotThrow(() => plant.DefinePropertiesOf(new Dog() { Name = "Bob" }));
+            Assert.DoesNotThrow(() => plant.Create<Dog>());
+        }
+
+        [Test]
         public void Is_Event_Created_Called()
         {
             var plant = new BasePlant();

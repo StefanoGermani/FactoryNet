@@ -48,6 +48,7 @@
     <Compile Include="PropertyDataTest.cs" />
     <Compile Include="TestModels\Book.cs" />
     <Compile Include="TestModels\Car.cs" />
+    <Compile Include="TestModels\Dog.cs" />
     <Compile Include="TestModels\House.cs" />
     <Compile Include="TestModels\Person.cs" />
     <Compile Include="TestModels\WriteOnceMemoryModule.cs" />
