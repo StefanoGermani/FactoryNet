@@ -4,3 +4,4 @@ _ReSharper*
 *.ReSharper.user
 *.suo
 *.nupkg
+*.DotSettings.user
