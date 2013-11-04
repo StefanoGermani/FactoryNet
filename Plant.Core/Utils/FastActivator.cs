@@ -7,7 +7,7 @@ namespace Plant.Core.Utils
 {
     class FastActivator
     {
-        public delegate T ObjectActivator<out T>(params object[] args);
+        public delegate T ObjectActivator<T>(params object[] args);
 
         public static ObjectActivator<T> GetActivator<T>(ConstructorInfo ctor)
         {
