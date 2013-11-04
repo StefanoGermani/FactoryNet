@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
+using Plant.Core.Utils;
 using Properties = System.Collections.Generic.IDictionary<Plant.Core.PropertyData, object>;
 using Blueprints = System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.IDictionary<Plant.Core.PropertyData, object>>;
 using Variations = System.Collections.Generic.Dictionary<string, System.Collections.Generic.IDictionary<Plant.Core.PropertyData, object>>;
@@ -65,11 +67,11 @@ namespace Plant.Core
         private T CreateViaConstructor<T>(Properties userProperties)
         {
             var type = typeof(T);
-            var constructor = type.GetConstructors().First();
-            var paramNames = constructor.GetParameters().Select(p => p.Name.ToLower()).ToList();
             var defaultProperties = _constructorBlueprints[type];
-
             var props = Merge(defaultProperties, userProperties);
+
+            var constructor = type.GetConstructors().First(c => c.GetParameters().Count() == props.Count);
+            var paramNames = constructor.GetParameters().Select(p => p.Name.ToLower()).ToList();
 
             return (T)constructor.Invoke(
                 props.Keys.OrderBy(prop => paramNames.IndexOf(prop.Name.ToLower())).
@@ -93,7 +95,7 @@ namespace Plant.Core
 
         private static T CreateInstanceWithEmptyConstructor<T>()
         {
-            return Activator.CreateInstance<T>();
+            return FastActivator.CreateInstance<T>();
         }
 
         public virtual T CreateForChild<T>()
