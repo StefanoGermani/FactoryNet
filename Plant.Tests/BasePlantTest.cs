@@ -283,7 +283,7 @@ namespace Plant.Tests
         public void Should_Call_AfterBuildCallback_After_Properties_Populated()
         {
             var testPlant = new BasePlant();
-            testPlant.DefinePropertiesOf<Person>(new { FirstName = "Angus", LastName = "MacGyver" },
+            testPlant.DefinePropertiesOf(new Person { FirstName = "Angus", LastName = "MacGyver" },
                 (p) => p.FullName = p.FirstName + p.LastName);
             var builtPerson = testPlant.Create<Person>();
             Assert.AreEqual(builtPerson.FullName, "AngusMacGyver");

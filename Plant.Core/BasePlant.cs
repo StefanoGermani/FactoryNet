@@ -261,19 +261,6 @@ namespace Plant.Core
             instanceProperty.SetValue(instance, lazyProperty.Func.DynamicInvoke(), null);
         }
 
-        /// <summary>
-        /// The post-build method will accept the object that was just constructed as a parameter, so that you
-        /// can assign other values to it. Unfortunately, you have to do the casting yourself, for now.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="defaults"></param>
-        /// <param name="afterPropertyPopulation"></param>
-        public virtual void DefinePropertiesOf<T>(object defaults, Action<T> afterPropertyPopulation)
-        {
-            DefinePropertiesOf<T>(defaults);
-            _postBuildActions[typeof(T)] = afterPropertyPopulation;
-        }
-
         public virtual void DefinePropertiesOf<T>(T defaults)
         {
             DefinePropertiesOf<T>((object)defaults);
@@ -335,7 +322,8 @@ namespace Plant.Core
         private IDictionary<PropertyData, object> ToPropertyList(object obj)
         {
             if (obj == null) return new Dictionary<PropertyData, object>();
-            return obj.GetType().GetProperties(BindingFlags.SetProperty).ToDictionary(prop => new PropertyData(prop), prop => prop.GetValue(obj, null));
+            var isAnonymous = obj.GetType().IsGenericType;
+            return obj.GetType().GetProperties().Where(prop => isAnonymous || prop.GetSetMethod() != null).ToDictionary(prop => new PropertyData(prop), prop => prop.GetValue(obj, null));
         }
 
         public BasePlant WithBlueprintsFromAssemblyOf<T>()
