@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using Plant.Core.Exceptions;
-using Plant.Core.Utils;
 using Properties = System.Collections.Generic.IDictionary<Plant.Core.PropertyData, object>;
 using Blueprints = System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.IDictionary<Plant.Core.PropertyData, object>>;
 using Variations = System.Collections.Generic.Dictionary<string, System.Collections.Generic.IDictionary<Plant.Core.PropertyData, object>>;
@@ -96,7 +94,7 @@ namespace Plant.Core
 
         private static T CreateInstanceWithEmptyConstructor<T>()
         {
-            return FastActivator.CreateInstance<T>();
+            return Activator.CreateInstance<T>();
         }
 
         public virtual T CreateForChild<T>()

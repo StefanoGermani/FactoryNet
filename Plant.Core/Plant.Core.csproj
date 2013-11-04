@@ -43,7 +43,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasePlant.cs" />
-    <Compile Include="Utils\FastActivator.cs" />
     <Compile Include="IBlueprint.cs" />
     <Compile Include="CreationStrategy.cs" />
     <Compile Include="PropertyData.cs" />
