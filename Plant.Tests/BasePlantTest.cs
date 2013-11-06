@@ -31,6 +31,14 @@ namespace Plant.Tests
         {
             var plant = new BasePlant();
             Assert.DoesNotThrow(() => plant.DefinePropertiesOf(new Dog() { Name = "Bob" }));
+        }
+
+        [Test]
+        public void Should_Not_Try_To_Populate_Property_Without_Setter()
+        {
+            var plant = new BasePlant();
+            plant.DefinePropertiesOf(new Dog() { Name = "Bob" });
+
             Assert.DoesNotThrow(() => plant.Create<Dog>());
         }
 
@@ -291,7 +299,7 @@ namespace Plant.Tests
         }
 
         [Test]
-        public void Should_Call_AfterBuildCallback_AfterConstructor_Population()
+        public void Should_Call_AfterBuildCallback_After_Constructor_Population()
         {
             var testPlant = new BasePlant();
             testPlant.DefineConstructionOf<House>(new { Color = "Red", SquareFoot = 3000 },
@@ -299,6 +307,36 @@ namespace Plant.Tests
 
             Assert.AreEqual("Blue3000", testPlant.Create<House>(new { Color = "Blue" }).Summary);
         }
+
+        [Test]
+        public void Should_Create_Objects_In_AfterBuildCallback_After_Properties_Populated()
+        {
+            var testPlant = new BasePlant();
+
+            testPlant.DefinePropertiesOf(new House());
+            testPlant.DefinePropertiesOf(new Person { FirstName = "Angus", LastName = "MacGyver" },
+                (p) => p.HouseWhereILive = testPlant.Create<House>(new House() { Color = "Red" }));
+            var builtPerson = testPlant.Create<Person>();
+
+            Assert.NotNull(builtPerson.HouseWhereILive);
+            Assert.AreEqual(builtPerson.HouseWhereILive.Color, "Red");
+        }
+
+        [Test]
+        public void Should_Create_Objects_In_AfterBuildCallback_After_Constructors_Populated()
+        {
+            var testPlant = new BasePlant();
+
+            testPlant.DefinePropertiesOf(new Person());
+            testPlant.DefineConstructionOf<House>(new { Color = "Red", SquareFoot = 1 },
+                (p) => p.Persons = new[] { testPlant.Create<Person>(new Person() { FirstName = "John" }) });
+            var buildHouse = testPlant.Create<House>();
+
+            Assert.NotNull(buildHouse.Persons.First());
+            Assert.AreEqual(buildHouse.Persons.First().FirstName, "John");
+        }
+
+
 
         [Test]
         public void Should_increment_values_in_a_sequence_with_property_construction()

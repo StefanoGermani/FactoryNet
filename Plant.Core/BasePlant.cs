@@ -162,6 +162,10 @@ namespace Plant.Core
                 if (StrategyFor(prop.PropertyType) == null || prop.GetValue(constructedObject, null) != null)
                     continue;
 
+                // check if property has a setter
+                if (prop.GetSetMethod() == null)
+                    continue;
+
                 var value = this.GetType().
                     GetMethod("CreateForChild").
                     MakeGenericMethod(prop.PropertyType).

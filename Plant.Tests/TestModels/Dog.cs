@@ -11,5 +11,6 @@ namespace Plant.Tests.TestModels
 
         public string ThrowException { get { throw new Exception(); } }
 
+        public Dog ThisDog { get { return null; } }
     }
 }
