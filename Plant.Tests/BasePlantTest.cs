@@ -212,6 +212,16 @@ namespace Plant.Tests
         }
 
         [Test]
+        [ExpectedException(typeof(ConstructorNotFoundException))]
+        public void Should_Throw_ConstructorNotFoundException_When_Constructor_Given_Invalid_Parameters()
+        {
+            var plant = new BasePlant();
+            plant.DefineConstructionOf<Person>(new { FirstName = "Barbara" });
+            plant.Create<Person>();
+        }
+
+
+        [Test]
         public void Should_Set_User_Properties_That_Are_Not_Defaulted()
         {
             var plant = new BasePlant();

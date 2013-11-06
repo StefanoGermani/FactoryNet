@@ -69,7 +69,11 @@ namespace Plant.Core
             var defaultProperties = _constructorBlueprints[type];
             var props = Merge(defaultProperties, userProperties);
 
-            var constructor = type.GetConstructors().First(c => c.GetParameters().Count() == props.Count);
+            var constructor = type.GetConstructors().FirstOrDefault(c => c.GetParameters().Count() == props.Count);
+
+            if(constructor == null)
+                throw new ConstructorNotFoundException(props.Count);
+
             var paramNames = constructor.GetParameters().Select(p => p.Name.ToLower()).ToList();
 
             return (T)constructor.Invoke(

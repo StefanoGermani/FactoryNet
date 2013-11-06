@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasePlant.cs" />
+    <Compile Include="Exceptions\ConstructorNotFoundException.cs" />
     <Compile Include="IBlueprint.cs" />
     <Compile Include="CreationStrategy.cs" />
     <Compile Include="PropertyData.cs" />
