@@ -44,8 +44,10 @@
   <ItemGroup>
     <Compile Include="BasePlant.cs" />
     <Compile Include="Exceptions\ConstructorNotFoundException.cs" />
+    <Compile Include="IPlant.cs" />
     <Compile Include="IBlueprint.cs" />
     <Compile Include="CreationStrategy.cs" />
+    <Compile Include="PlantFarm.cs" />
     <Compile Include="PropertyData.cs" />
     <Compile Include="Exceptions\LazyPropertyHasWrongTypeException.cs" />
     <Compile Include="LazyProperty.cs" />

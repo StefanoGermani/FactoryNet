@@ -232,7 +232,7 @@ namespace Plant.Tests
         [Test]
         public void Should_Load_Blueprints_From_Assembly()
         {
-            var plant = new BasePlant().WithBlueprintsFromAssemblyOf<TestBlueprint>();
+            var plant = PlantFarm.WithBlueprintsFromAssemblyOf<TestBlueprint>();
             Assert.AreEqual("Elaine", plant.Create<Person>().MiddleName);
         }
 

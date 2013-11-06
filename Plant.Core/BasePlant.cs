@@ -33,7 +33,7 @@ namespace Plant.Core
     public delegate void BluePrintCreatedEventHandler(object sender, BluePrintEventArgs e);
     #endregion
 
-    public class BasePlant
+    public class BasePlant : IPlant
     {
         private readonly Variations _propertyVariations = new Variations();
         private readonly Blueprints _propertyBlueprints = new Blueprints();
@@ -244,7 +244,7 @@ namespace Plant.Core
             _sequenceValues[typeof(T)]++;
         }
 
-        private static void AssignSequenceResult<T>(T instance, PropertyInfo instanceProperty, object value, int sequenceValue)
+        private void AssignSequenceResult<T>(T instance, PropertyInfo instanceProperty, object value, int sequenceValue)
         {
             var sequence = (ISequence)value;
 
@@ -257,7 +257,7 @@ namespace Plant.Core
             instanceProperty.SetValue(instance, sequence.Func.DynamicInvoke(sequenceValue), null);
         }
 
-        private static void AssignLazyPropertyResult<T>(T instance, PropertyInfo instanceProperty, object value)
+        private void AssignLazyPropertyResult<T>(T instance, PropertyInfo instanceProperty, object value)
         {
             var lazyProperty = (ILazyProperty)value;
 
@@ -316,6 +316,7 @@ namespace Plant.Core
             DefineConstructionOf<T>(defaults);
             _postBuildActions[typeof(T)] = afterCtorPopulation;
         }
+
         public void DefineConstructionOf<T>(object defaults)
         {
             _creationStrategies.Add(typeof(T), CreationStrategy.Constructor);
@@ -334,19 +335,5 @@ namespace Plant.Core
             var isAnonymous = obj.GetType().IsGenericType;
             return obj.GetType().GetProperties().Where(prop => isAnonymous || prop.GetSetMethod() != null).ToDictionary(prop => new PropertyData(prop), prop => prop.GetValue(obj, null));
         }
-
-        public BasePlant WithBlueprintsFromAssemblyOf<T>()
-        {
-            var assembly = typeof(T).Assembly;
-            var blueprintTypes = assembly.GetTypes().Where(t => typeof(IBlueprint).IsAssignableFrom(t));
-            blueprintTypes.ToList().ForEach(blueprintType =>
-                                          {
-                                              var blueprint = (IBlueprint)Activator.CreateInstance(blueprintType);
-                                              blueprint.SetupPlant(this);
-                                          });
-            return this;
-
-        }
-
     }
 }
