@@ -230,13 +230,6 @@ namespace Plant.Tests
         }
 
         [Test]
-        public void Should_Load_Blueprints_From_Assembly()
-        {
-            var plant = PlantFarm.WithBlueprintsFromAssemblyOf<TestBlueprint>();
-            Assert.AreEqual("Elaine", plant.Create<Person>().MiddleName);
-        }
-
-        [Test]
         public void Should_Lazily_Evaluate_Delegate_Properties()
         {
             var plant = new BasePlant();
