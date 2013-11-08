@@ -21,5 +21,10 @@ namespace Plant.Core
             return plant;
 
         }
+
+        public static IPlant CreateDatabasePlant(IPersisterSeed persisterSeed)
+        {
+            return new PersisterPlant(persisterSeed);
+        }
     }
 }
