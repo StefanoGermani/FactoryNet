@@ -96,7 +96,7 @@ namespace Plant.Core
                                   key => overrides.ContainsKey(key) ? overrides[key] : defaults[key]);
         }
 
-        private static T CreateInstanceWithEmptyConstructor<T>()
+        private T CreateInstanceWithEmptyConstructor<T>()
         {
             return Activator.CreateInstance<T>();
         }
@@ -197,7 +197,7 @@ namespace Plant.Core
             return constructedObject;
         }
 
-        private static string BluePrintKey<T>(string variation)
+        private string BluePrintKey<T>(string variation)
         {
             return string.Format("{0}-{1}", typeof(T), variation);
         }

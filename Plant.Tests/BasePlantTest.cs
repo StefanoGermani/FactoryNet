@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq;
 using NUnit.Framework;
 using Plant.Core;
 using Plant.Core.Exceptions;
-using Plant.Tests.TestBlueprints;
 using Plant.Tests.TestModels;
 
 namespace Plant.Tests
@@ -49,9 +46,9 @@ namespace Plant.Tests
             plant.DefinePropertiesOf(new House() { Color = "blue", SquareFoot = 50 });
             plant.DefinePropertiesOf(new Person() { FirstName = "Leo" });
 
-            plant.BluePrintCreated += new BluePrintCreatedEventHandler(plant_BluePrintCreated);
-            var house = plant.Create<House>();
-            var person = plant.Create<Person>();
+            plant.BluePrintCreated += plant_BluePrintCreated;
+            plant.Create<House>(); 
+            plant.Create<Person>();
         }
 
         void plant_BluePrintCreated(object sender, BluePrintEventArgs e)
@@ -367,18 +364,6 @@ namespace Plant.Tests
         }
 
     }
-    namespace TestBlueprints
-    {
-        class TestBlueprint : IBlueprint
-        {
-            public void SetupPlant(BasePlant plant)
-            {
-                plant.DefinePropertiesOf<Person>(new
-                                       {
-                                           MiddleName = "Elaine"
-                                       });
-            }
-        }
-    }
+    
 }
 

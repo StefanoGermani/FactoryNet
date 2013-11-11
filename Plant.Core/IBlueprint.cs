@@ -2,6 +2,6 @@ namespace Plant.Core
 {
   public interface IBlueprint
   {
-      void SetupPlant(BasePlant p);
+      void SetupPlant(IPlant p);
   }
 }

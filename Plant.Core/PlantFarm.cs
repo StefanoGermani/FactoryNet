@@ -21,7 +21,7 @@ namespace Plant.Core
             return LoadAssembly<T>(plant);
         }
 
-        private static IPlant LoadAssembly<T>(BasePlant plant)
+        private static IPlant LoadAssembly<T>(IPlant plant)
         {
             var assembly = typeof (T).Assembly;
             var blueprintTypes = assembly.GetTypes().Where(t => typeof (IBlueprint).IsAssignableFrom(t));

@@ -35,4 +35,18 @@ namespace Plant.Tests
             Assert.AreEqual("Elaine", plant.Create<Person>().MiddleName);
         }
     }
+
+    namespace TestBlueprints
+    {
+        class TestBlueprint : IBlueprint
+        {
+            public void SetupPlant(IPlant plant)
+            {
+                plant.DefinePropertiesOf<Person>(new
+                {
+                    MiddleName = "Elaine"
+                });
+            }
+        }
+    }
 }

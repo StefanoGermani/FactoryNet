@@ -22,7 +22,7 @@ namespace Plant.Core
 
         public override T Create<T>(object userSpecifiedProperties, string variation, bool created)
         {
-            var constructedObject = base.Create<T>(userSpecifiedProperties, variation, created);
+            var constructedObject = base.Create<T>(userSpecifiedProperties, variation, true);
 
             if (created)
             {
