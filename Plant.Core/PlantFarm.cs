@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Plant.Core.Impl;
 
 namespace Plant.Core
 {
@@ -33,6 +34,14 @@ namespace Plant.Core
             return plant;
         }
 
-        
+        public static IPlant Cultivate()
+        {
+            return new BasePlant();
+        }
+
+        public static IPlant Cultivate(IPersisterSeed persisterSeed)
+        {
+            return new PersisterPlant(persisterSeed);
+        }
     }
 }

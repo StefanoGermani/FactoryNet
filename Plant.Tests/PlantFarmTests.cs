@@ -17,21 +17,22 @@ namespace Plant.Tests
         public void Should_Cultivate_BasePlant()
         {
             var plant = PlantFarm.CultivateWithBlueprintsFromAssemblyOf<TestBlueprint>();
-            Assert.IsInstanceOf<BasePlant>(plant);
+            Assert.AreEqual("Plant.Core.Impl.BasePlant", plant.GetType().ToString());
         }
 
         [Test]
         public void Should_Cultivate_PersisterPlant()
         {
             var persister = MockRepository.GenerateMock<IPersisterSeed>();
-            var plant = PlantFarm.CultivateWithBlueprintsFromAssemblyOf<TestBlueprint>(persister);
-            Assert.IsInstanceOf<PersisterPlant>(plant);
+            var plant = PlantFarm.Cultivate(persister);
+            Assert.AreEqual("Plant.Core.Impl.PersisterPlant", plant.GetType().ToString());
         }
 
         [Test]
         public void Should_Load_Blueprints_From_Assembly()
         {
             var plant = PlantFarm.CultivateWithBlueprintsFromAssemblyOf<TestBlueprint>();
+            Assert.AreEqual("Plant.Core.Impl.BasePlant", plant.GetType().ToString());
             Assert.AreEqual("Elaine", plant.Create<Person>().MiddleName);
         }
     }
@@ -42,7 +43,7 @@ namespace Plant.Tests
         {
             public void SetupPlant(IPlant plant)
             {
-                plant.DefinePropertiesOf<Person>(new
+                plant.Define(() => new Person
                 {
                     MiddleName = "Elaine"
                 });
