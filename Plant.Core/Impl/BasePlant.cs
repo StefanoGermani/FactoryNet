@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using Plant.Core.Exceptions;
 using Plant.Core.Helpers;
 
@@ -35,7 +34,6 @@ namespace Plant.Core.Impl
     {
         private readonly Dictionary<string, object> _createdBluePrints = new Dictionary<string, object>();
         private readonly IDictionary<Type, object> _postCreationActions = new Dictionary<Type, object>();
-        //private readonly IDictionary<string, object> _postBuildVariationActions = new Dictionary<string, object>();
 
         private readonly SequenceDictionary _sequenceValues = new SequenceDictionary();
         private readonly ConstructorDictionary _costructors = new ConstructorDictionary();
@@ -54,8 +52,6 @@ namespace Plant.Core.Impl
 
         #endregion
 
-
-
         public virtual T CreateForChild<T>()
         {
             string bluePrintKey = BluePrintKey<T>(null);
@@ -71,15 +67,20 @@ namespace Plant.Core.Impl
 
         public virtual T Build<T>()
         {
-            return Build<T>(null);
+            return Build<T>(string.Empty, null);
         }
 
-        //public virtual T Build<T>(string variation)
-        //{
-        //    return Create<T>(null, variation, false);
-        //}
+        public virtual T Build<T>(string variation)
+        {
+            return Build<T>(variation, null);
+        }
 
         public virtual T Build<T>(Action<T> userSpecifiedProperties)
+        {
+            return Build(string.Empty, userSpecifiedProperties);
+        }
+
+        public virtual T Build<T>(string variation, Action<T> userSpecifiedProperties)
         {
             var constructedObject = _costructors.CreateIstance<T>();
 
@@ -115,20 +116,20 @@ namespace Plant.Core.Impl
 
         public virtual T Create<T>()
         {
-            return Create<T>(null);
+            return Create<T>(string.Empty, null);
         }
 
-        //public virtual T Create<T>(string variation)
-        //{
-        //    return Create<T>(null, variation, true);
-        //}
-
-        //public virtual T Create<T>(Action<T> userSpecifiedProperties)
-        //{
-        //    return Create<T>(userSpecifiedProperties, null, true);
-        //}
+        public virtual T Create<T>(string variation)
+        {
+            return Create<T>(variation, null);
+        }
 
         public virtual T Create<T>(Action<T> userSpecifiedProperties)
+        {
+            return Create<T>(string.Empty, userSpecifiedProperties);
+        }
+
+        public virtual T Create<T>(string variation, Action<T> userSpecifiedProperties)
         {
 
             var constructedObject = Build(userSpecifiedProperties);
@@ -190,7 +191,6 @@ namespace Plant.Core.Impl
                       propertyInfo.SetValue(instance, compiled.DynamicInvoke(null), null);
                   }
               });
-            //_sequenceValues[typeof(T)]++;
         }
 
 
@@ -217,6 +217,11 @@ namespace Plant.Core.Impl
             }
         }
 
+        public virtual void Define<T>(string variation, Expression<Func<T>> definition)
+        {
+            Define(definition);
+        }
+
         public virtual void Define<T>(Expression<Func<T>> definition, Action<T> afterCreation)
         {
             Define(definition);
@@ -224,30 +229,10 @@ namespace Plant.Core.Impl
             _postCreationActions.Add(typeof(T), afterCreation);
         }
 
-    }
-
-    internal class SequenceDictionary
-    {
-        readonly Dictionary<Type, Dictionary<PropertyInfo, int>> _sequenceValues = new Dictionary<Type, Dictionary<PropertyInfo, int>>();
-
-        public int GetSequenceValue<T>(PropertyInfo propertyInfo)
+        public virtual void Define<T>(string variation, Expression<Func<T>> definition, Action<T> afterCreation)
         {
-            int value;
-
-            if (_sequenceValues.ContainsKey(typeof(T)) && _sequenceValues[typeof(T)].ContainsKey(propertyInfo))
-            {
-                value = _sequenceValues[typeof(T)][propertyInfo];
-            }
-            else
-            {
-                _sequenceValues.Add(typeof(T), new Dictionary<PropertyInfo, int>());
-                _sequenceValues[typeof(T)].Add(propertyInfo, value = 0);
-            }
-
-
-            _sequenceValues[typeof(T)][propertyInfo]++;
-
-            return value;
+            Define(definition, afterCreation);
         }
+
     }
 }

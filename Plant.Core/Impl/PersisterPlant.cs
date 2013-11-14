@@ -5,9 +5,6 @@ namespace Plant.Core.Impl
 {
     internal class PersisterPlant : BasePlant
     {
-        //private readonly IDictionary<Type, object> _postCreationActions = new Dictionary<Type, object>();
-        //private readonly IDictionary<string, object> _postCreationVariationActions = new Dictionary<string, object>();
-
         private readonly IPersisterSeed _persisterSeed;
 
         public PersisterPlant(IPersisterSeed persisterSeed)
@@ -19,7 +16,6 @@ namespace Plant.Core.Impl
 
             _persisterSeed = persisterSeed;
         }
-
 
         protected override void OnBluePrintCreated(BluePrintEventArgs e)
         {

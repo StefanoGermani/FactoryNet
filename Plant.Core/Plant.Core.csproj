@@ -50,6 +50,7 @@
     <Compile Include="Impl\PersisterPlant.cs" />
     <Compile Include="Exceptions\PersisterException.cs" />
     <Compile Include="Impl\PropertyDictionary.cs" />
+    <Compile Include="Impl\SequenceDictionary.cs" />
     <Compile Include="IPersisterSeed.cs" />
     <Compile Include="IPlant.cs" />
     <Compile Include="IBlueprint.cs" />

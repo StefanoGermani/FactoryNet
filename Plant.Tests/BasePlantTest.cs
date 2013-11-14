@@ -147,48 +147,48 @@ namespace Plant.Tests
 
         #region Variations
 
-        //[Test]
-        //public void Should_Create_Variation_Of_Specified_Type()
-        //{
-        //    plant.DefinePropertiesOf<Person>(new { FirstName = "" });
-        //    plant.DefineVariationOf<Person>("My", new { FirstName = "My" });
-        //    plant.DefineVariationOf<Person>("Her", new { FirstName = "Her" });
+        [Test]
+        public void Should_Create_Variation_Of_Specified_Type()
+        {
+            _plant.Define(() => new Person { FirstName = "" });
+            _plant.Define("My", () => new Person { FirstName = "My" });
+            _plant.Define("Her", () => new Person { FirstName = "Her" });
 
-        //    Assert.IsInstanceOf(typeof(Person), plant.Create<Person>());
-        //    Assert.IsInstanceOf(typeof(Person), plant.Create<Person>("My"));
-        //    Assert.IsInstanceOf(typeof(Person), plant.Create<Person>("Her"));
-        //}
+            Assert.IsInstanceOf(typeof(Person), _plant.Create<Person>());
+            Assert.IsInstanceOf(typeof(Person), _plant.Create<Person>("My"));
+            Assert.IsInstanceOf(typeof(Person), _plant.Create<Person>("Her"));
+        }
 
-        //[Test]
-        //public void Should_Create_Variation_With_Extension()
-        //{
-        //    plant.DefinePropertiesOf<House>(new House { Color = "blue" }, OnPropertyPopulation);
-        //    plant.DefineVariationOf<House>("My", new House { Color = "My" }, OnPropertyPopulationVariation);
+        [Test]
+        public void Should_Create_Variation_With_Extension()
+        {
+            _plant.Define(() => new House { Color = "blue" }, OnPropertyPopulation);
+            _plant.Define("My", () => new House { Color = "My" }, OnPropertyPopulationVariation);
 
-        //    Assert.AreEqual(plant.Create<House>().Persons.First().FirstName, "Pablo");
-        //    Assert.AreEqual(plant.Create<House>("My").Persons.First().FirstName, "Pedro");
-        //}
+            Assert.AreEqual(_plant.Create<House>().Persons.First().FirstName, "Pablo");
+            Assert.AreEqual(_plant.Create<House>("My").Persons.First().FirstName, "Pedro");
+        }
 
-        //private static void OnPropertyPopulation(House h)
-        //{
-        //    h.Persons.Add(new Person() { FirstName = "Pablo" });
-        //}
+        private static void OnPropertyPopulation(House h)
+        {
+            h.Persons.Add(new Person() { FirstName = "Pablo" });
+        }
 
-        //private static void OnPropertyPopulationVariation(House h)
-        //{
-        //    h.Persons.Clear();
-        //    h.Persons.Add(new Person() { FirstName = "Pedro" });
-        //}
+        private static void OnPropertyPopulationVariation(House h)
+        {
+            h.Persons.Clear();
+            h.Persons.Add(new Person() { FirstName = "Pedro" });
+        }
 
-        //[Test]
-        //public void Should_Create_Variation_Of_Specified_Type_With_Correct_Data()
-        //{
-        //    plant.DefinePropertiesOf<Person>(new { FirstName = "" });
-        //    plant.DefineVariationOf<Person>("My", new { FirstName = "My" });
+        [Test]
+        public void Should_Create_Variation_Of_Specified_Type_With_Correct_Data()
+        {
+            _plant.Define(() => new Person() { FirstName = "" });
+            _plant.Define("My", () => new Person { FirstName = "My" });
 
-        //    var person = plant.Create<Person>("My");
-        //    Assert.AreEqual("My", person.FirstName);
-        //}
+            var person = _plant.Create<Person>("My");
+            Assert.AreEqual("My", person.FirstName);
+        }
 
         #endregion
 
