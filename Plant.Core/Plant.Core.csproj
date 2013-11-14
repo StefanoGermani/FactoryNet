@@ -44,13 +44,15 @@
   <ItemGroup>
     <Compile Include="Exceptions\WrongDefinitionTypeException.cs" />
     <Compile Include="Impl\BasePlant.cs" />
-    <Compile Include="Impl\BlueprintKeyGenerator.cs" />
-    <Compile Include="Impl\ConstructorDictionary.cs" />
+    <Compile Include="Impl\Dictionaries\CreatedBlueprintsDictionary.cs" />
+    <Compile Include="Impl\Dictionaries\BaseDictionary.cs" />
+    <Compile Include="Impl\Dictionaries\ConstructorDictionary.cs" />
     <Compile Include="Exceptions\DuplicateBlueprintException.cs" />
     <Compile Include="Impl\PersisterPlant.cs" />
     <Compile Include="Exceptions\PersisterException.cs" />
-    <Compile Include="Impl\PropertyDictionary.cs" />
-    <Compile Include="Impl\SequenceDictionary.cs" />
+    <Compile Include="Impl\Dictionaries\PropertyDictionary.cs" />
+    <Compile Include="Impl\Dictionaries\SequenceDictionary.cs" />
+    <Compile Include="Impl\Dictionaries\PostCreationActionDictionary.cs" />
     <Compile Include="IPersisterSeed.cs" />
     <Compile Include="IPlant.cs" />
     <Compile Include="IBlueprint.cs" />

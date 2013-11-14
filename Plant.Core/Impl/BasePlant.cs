@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Plant.Core.Exceptions;
+using Plant.Core.Impl.Dictionaries;
 
 namespace Plant.Core.Impl
 {
@@ -31,12 +32,14 @@ namespace Plant.Core.Impl
 
     internal class BasePlant : IPlant
     {
-        private readonly ConstructorDictionary _costructors = new ConstructorDictionary();
-        private readonly Dictionary<string, object> _createdBluePrints = new Dictionary<string, object>();
-        private readonly IDictionary<Type, object> _postCreationActions = new Dictionary<Type, object>();
 
+
+
+        private readonly ConstructorDictionary _costructors = new ConstructorDictionary();
         private readonly PropertyDictionary _properties = new PropertyDictionary();
         private readonly SequenceDictionary _sequenceValues = new SequenceDictionary();
+        private readonly PostCreationActionDictionary _postCreationActions = new PostCreationActionDictionary();
+        private readonly CreatedBlueprintsDictionary _createdBluePrints = new CreatedBlueprintsDictionary();
 
         #region BluePrintCreated Event
 
@@ -52,11 +55,10 @@ namespace Plant.Core.Impl
 
         public virtual T CreateForChild<T>()
         {
-            string bluePrintKey = BlueprintKeyGenerator.BluePrintKey<T>();
             T constructedObject;
 
-            if (_createdBluePrints.ContainsKey(bluePrintKey))
-                constructedObject = (T)_createdBluePrints[bluePrintKey];
+            if (_createdBluePrints.ContainsKey<T>(string.Empty))
+                constructedObject = _createdBluePrints.Get<T>(string.Empty);
             else
                 constructedObject = Create<T>();
 
@@ -80,10 +82,10 @@ namespace Plant.Core.Impl
 
         public virtual T Build<T>(string variation, Action<T> userSpecifiedProperties)
         {
-            var constructedObject = _costructors.CreateIstance<T>();
+            var constructedObject = _costructors.CreateIstance<T>(variation);
 
-            if (_properties.ContainsKey<T>())
-                SetProperties(_properties.Get<T>(), constructedObject);
+            if (_properties.ContainsKey<T>(variation))
+                SetProperties(_properties.Get<T>(variation), constructedObject);
 
             if (userSpecifiedProperties != null)
             {
@@ -94,7 +96,7 @@ namespace Plant.Core.Impl
             // Also if the property has a value, don't override.
             foreach (PropertyInfo prop in constructedObject.GetType().GetProperties())
             {
-                if (!_costructors.ContainsType(prop.PropertyType) || prop.GetValue(constructedObject, null) != null)
+                if (!_costructors.ContainsType(variation, prop.PropertyType) || prop.GetValue(constructedObject, null) != null)
                     continue;
 
                 // check if property has a setter
@@ -129,65 +131,59 @@ namespace Plant.Core.Impl
 
         public virtual T Create<T>(string variation, Action<T> userSpecifiedProperties)
         {
-            T constructedObject = Build(userSpecifiedProperties);
-
-
-            string bluePrintKey = BlueprintKeyGenerator.BluePrintKey<T>();
+            T constructedObject = Build(variation, userSpecifiedProperties);
 
             OnBluePrintCreated(new BluePrintEventArgs(constructedObject));
 
-            if (!_createdBluePrints.ContainsKey(bluePrintKey))
-                _createdBluePrints.Add(bluePrintKey, constructedObject);
+            if (!_createdBluePrints.ContainsKey<T>(variation))
+                _createdBluePrints.Add(variation, constructedObject);
 
-            if (_postCreationActions.ContainsKey(typeof(T)))
-                ((Action<T>)_postCreationActions[typeof(T)])(constructedObject);
-
-            //if (_postBuildVariationActions.ContainsKey(bluePrintKey))
-            //    ((Action<T>)_postBuildVariationActions[bluePrintKey])(constructedObject);
+            if (_postCreationActions.ContainsKey<T>(variation))
+                _postCreationActions.ExecuteAction(variation, constructedObject);
 
             return constructedObject;
         }
 
         public virtual void Define<T>(Expression<Func<T>> definition)
         {
-            if (_costructors.ContainsType<T>())
-                throw new DuplicateBlueprintException(typeof(T).Name +
-                                                      " is already registered. You can only register one factory per type.");
+            Define(string.Empty, definition);
+        }
+
+        public virtual void Define<T>(string variation, Expression<Func<T>> definition)
+        {
+            Define(variation, definition, null);
+        }
+
+        public virtual void Define<T>(Expression<Func<T>> definition, Action<T> afterCreation)
+        {
+            Define(string.Empty, definition, afterCreation);
+        }
+
+        public virtual void Define<T>(string variation, Expression<Func<T>> definition, Action<T> afterCreation)
+        {
+            if (_costructors.ContainsType<T>(variation))
+                throw new DuplicateBlueprintException(typeof(T), variation);
 
             switch (definition.Body.NodeType)
             {
                 case ExpressionType.MemberInit:
                     {
                         var memberInitExpression = ((MemberInitExpression)definition.Body);
-                        _costructors.Add<T>(memberInitExpression.NewExpression);
-                        _properties.Add<T>(memberInitExpression.Bindings);
+                        _costructors.Add<T>(variation, memberInitExpression.NewExpression);
+                        _properties.Add<T>(variation, memberInitExpression.Bindings);
                     }
                     break;
                 case ExpressionType.New:
                     {
-                        _costructors.Add<T>((NewExpression)definition.Body);
+                        _costructors.Add<T>(variation, (NewExpression)definition.Body);
                     }
                     break;
                 default:
                     throw new WrongDefinitionTypeException();
             }
-        }
 
-        public virtual void Define<T>(string variation, Expression<Func<T>> definition)
-        {
-            Define(definition);
-        }
-
-        public virtual void Define<T>(Expression<Func<T>> definition, Action<T> afterCreation)
-        {
-            Define(definition);
-
-            _postCreationActions.Add(typeof(T), afterCreation);
-        }
-
-        public virtual void Define<T>(string variation, Expression<Func<T>> definition, Action<T> afterCreation)
-        {
-            Define(definition, afterCreation);
+            if (afterCreation != null)
+                _postCreationActions.Add(variation, afterCreation);
         }
 
         private void SetProperties<T>(IDictionary<PropertyData, Expression> properties, T instance)

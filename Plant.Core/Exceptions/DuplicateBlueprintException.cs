@@ -5,22 +5,8 @@ namespace Plant.Core.Exceptions
 {
     public class DuplicateBlueprintException : Exception
     {
-        public DuplicateBlueprintException()
-        {
-        }
-
-        public DuplicateBlueprintException(string message)
-            : base(message)
-        {
-        }
-
-        public DuplicateBlueprintException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
-
-        protected DuplicateBlueprintException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
+        public DuplicateBlueprintException(Type type, string variation)
+            : base(string.Format("{0}{1} is already registered. You can only register one factory per type/variant.", type, string.IsNullOrEmpty(variation) ? string.Empty : " - " + variation))
         {
         }
     }
