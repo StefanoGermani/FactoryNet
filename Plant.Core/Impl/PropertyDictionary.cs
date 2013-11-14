@@ -6,9 +6,10 @@ using System.Reflection;
 
 namespace Plant.Core.Impl
 {
-    internal class PropertyDictionary 
+    internal class PropertyDictionary
     {
-        readonly Dictionary<string, IDictionary<PropertyData, Expression>> _properties = new Dictionary<string, IDictionary<PropertyData, Expression>>();
+        private readonly Dictionary<string, IDictionary<PropertyData, Expression>> _properties =
+            new Dictionary<string, IDictionary<PropertyData, Expression>>();
 
         public void Add<T>(string variation, IEnumerable<MemberBinding> defaults)
         {
@@ -29,8 +30,8 @@ namespace Plant.Core.Impl
         {
             if (defaults == null) return new Dictionary<PropertyData, Expression>();
 
-            return defaults.ToDictionary(memberBinding => new PropertyData((PropertyInfo)memberBinding.Member),
-                                         memberBinding => ((MemberAssignment)memberBinding).Expression);
+            return defaults.ToDictionary(memberBinding => new PropertyData((PropertyInfo) memberBinding.Member),
+                                         memberBinding => ((MemberAssignment) memberBinding).Expression);
         }
 
         public void Add<T>(ReadOnlyCollection<MemberBinding> defaults)
@@ -42,7 +43,5 @@ namespace Plant.Core.Impl
         {
             return _properties.ContainsKey(BlueprintKeyGenerator.BluePrintKey<T>());
         }
-
-
     }
 }

@@ -16,7 +16,7 @@ namespace Plant.Core
         T Create<T>(string variation);
         T Create<T>(Action<T> userSpecifiedProperties);
         T Create<T>(string variation, Action<T> userSpecifiedProperties);
-       
+
         void Define<T>(Expression<Func<T>> definition);
         void Define<T>(string variation, Expression<Func<T>> definition);
         void Define<T>(Expression<Func<T>> definition, Action<T> afterCreation);

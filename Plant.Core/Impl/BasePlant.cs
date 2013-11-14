@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using Plant.Core.Exceptions;
 using Plant.Core.Helpers;
 
 namespace Plant.Core.Impl
 {
+
     #region Events
 
     public class BluePrintEventArgs : EventArgs
@@ -20,25 +22,22 @@ namespace Plant.Core.Impl
 
         public object ObjectConstructed
         {
-            get
-            {
-                return _objectConstructed;
-            }
+            get { return _objectConstructed; }
         }
     }
 
     public delegate void BluePrintCreatedEventHandler(object sender, BluePrintEventArgs e);
+
     #endregion
 
     internal class BasePlant : IPlant
     {
+        private readonly ConstructorDictionary _costructors = new ConstructorDictionary();
         private readonly Dictionary<string, object> _createdBluePrints = new Dictionary<string, object>();
         private readonly IDictionary<Type, object> _postCreationActions = new Dictionary<Type, object>();
 
-        private readonly SequenceDictionary _sequenceValues = new SequenceDictionary();
-        private readonly ConstructorDictionary _costructors = new ConstructorDictionary();
         private readonly PropertyDictionary _properties = new PropertyDictionary();
-
+        private readonly SequenceDictionary _sequenceValues = new SequenceDictionary();
 
         #region BluePrintCreated Event
 
@@ -94,7 +93,7 @@ namespace Plant.Core.Impl
 
             // We should check if for the object properties we have a creation strategy and call create on that one.
             // Also if the property has a value, don't override.
-            foreach (var prop in constructedObject.GetType().GetProperties())
+            foreach (PropertyInfo prop in constructedObject.GetType().GetProperties())
             {
                 if (!_costructors.ContainsType(prop.PropertyType) || prop.GetValue(constructedObject, null) != null)
                     continue;
@@ -103,7 +102,7 @@ namespace Plant.Core.Impl
                 if (prop.GetSetMethod() == null)
                     continue;
 
-                var value = this.GetType().
+                object value = GetType().
                     GetMethod("CreateForChild").
                     MakeGenericMethod(prop.PropertyType).
                     Invoke(this, null);
@@ -126,16 +125,15 @@ namespace Plant.Core.Impl
 
         public virtual T Create<T>(Action<T> userSpecifiedProperties)
         {
-            return Create<T>(string.Empty, userSpecifiedProperties);
+            return Create(string.Empty, userSpecifiedProperties);
         }
 
         public virtual T Create<T>(string variation, Action<T> userSpecifiedProperties)
         {
+            T constructedObject = Build(userSpecifiedProperties);
 
-            var constructedObject = Build(userSpecifiedProperties);
 
-
-            var bluePrintKey = BlueprintKeyGenerator.BluePrintKey<T>();
+            string bluePrintKey = BlueprintKeyGenerator.BluePrintKey<T>();
 
             OnBluePrintCreated(new BluePrintEventArgs(constructedObject));
 
@@ -151,52 +149,11 @@ namespace Plant.Core.Impl
             return constructedObject;
         }
 
-        protected string BluePrintKey<T>(string variation)
-        {
-            return string.Format("{0}-{1}", typeof(T), variation);
-        }
-
-        private void UpdateProperties<T>(T constructedObject, string variation)
-        {
-            if (string.IsNullOrEmpty(variation))
-                return;
-
-            SetProperties(_properties.Get<T>(variation), constructedObject);
-        }
-
-        private void SetProperties<T>(IDictionary<PropertyData, Expression> properties, T instance)
-        {
-            properties.Keys.ToList().ForEach(property =>
-              {
-                  var propertyInfo = instance.GetType().GetProperties().FirstOrDefault(prop => prop.Name == property.Name);
-                  if (propertyInfo == null) throw new PropertyNotFoundException(property.Name, properties[property]);
-
-                  var expression = properties[property];
-
-                  var callExpression = expression as MethodCallExpression;
-
-                  if (callExpression != null && callExpression.Method.DeclaringType == typeof(Sequence))
-                  {
-                      var sequenceNumber = _sequenceValues.GetSequenceValue<T>(propertyInfo);
-
-                      var compiled = ((LambdaExpression) callExpression.Arguments[0]).Compile();
-
-                      propertyInfo.SetValue(instance, compiled.DynamicInvoke(sequenceNumber), null);
-                  }
-                  else
-                  {
-                      var lambda = Expression.Lambda(expression);
-                      var compiled = lambda.Compile();
-
-                      propertyInfo.SetValue(instance, compiled.DynamicInvoke(null), null);
-                  }
-              });
-        }
-
-
         public virtual void Define<T>(Expression<Func<T>> definition)
         {
-            if (_costructors.ContainsType<T>()) throw new DuplicateBlueprintException(typeof(T).Name + " is already registered. You can only register one factory per type.");
+            if (_costructors.ContainsType<T>())
+                throw new DuplicateBlueprintException(typeof(T).Name +
+                                                      " is already registered. You can only register one factory per type.");
 
             switch (definition.Body.NodeType)
             {
@@ -234,5 +191,39 @@ namespace Plant.Core.Impl
             Define(definition, afterCreation);
         }
 
+        protected string BluePrintKey<T>(string variation)
+        {
+            return string.Format("{0}-{1}", typeof(T), variation);
+        }
+
+        private void SetProperties<T>(IDictionary<PropertyData, Expression> properties, T instance)
+        {
+            properties.Keys.ToList().ForEach(property =>
+                {
+                    PropertyInfo propertyInfo =
+                        instance.GetType().GetProperties().FirstOrDefault(prop => prop.Name == property.Name);
+                    if (propertyInfo == null) throw new PropertyNotFoundException(property.Name, properties[property]);
+
+                    Expression expression = properties[property];
+
+                    var callExpression = expression as MethodCallExpression;
+
+                    if (callExpression != null && callExpression.Method.DeclaringType == typeof(Sequence))
+                    {
+                        int sequenceNumber = _sequenceValues.GetSequenceValue<T>(propertyInfo);
+
+                        Delegate compiled = ((LambdaExpression)callExpression.Arguments[0]).Compile();
+
+                        propertyInfo.SetValue(instance, compiled.DynamicInvoke(sequenceNumber), null);
+                    }
+                    else
+                    {
+                        LambdaExpression lambda = Expression.Lambda(expression);
+                        Delegate compiled = lambda.Compile();
+
+                        propertyInfo.SetValue(instance, compiled.DynamicInvoke(null), null);
+                    }
+                });
+        }
     }
 }

@@ -19,18 +19,17 @@ namespace Plant.Core.Impl
 
         protected override void OnBluePrintCreated(BluePrintEventArgs e)
         {
-             try
-             {
-                 if (!_persisterSeed.Save(e.ObjectConstructed))
-                 {
-                     throw new PersisterException();
-                 }
-
-             }
-             catch (Exception ex)
-             {
-                 throw new PersisterException(ex);
-             }
+            try
+            {
+                if (!_persisterSeed.Save(e.ObjectConstructed))
+                {
+                    throw new PersisterException();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new PersisterException(ex);
+            }
 
             base.OnBluePrintCreated(e);
         }

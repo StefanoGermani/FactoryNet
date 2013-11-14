@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using Plant.Core.Impl;
 
 namespace Plant.Core
@@ -24,8 +24,8 @@ namespace Plant.Core
 
         private static IPlant LoadAssembly<T>(IPlant plant)
         {
-            var assembly = typeof (T).Assembly;
-            var blueprintTypes = assembly.GetTypes().Where(t => typeof (IBlueprint).IsAssignableFrom(t));
+            Assembly assembly = typeof (T).Assembly;
+            IEnumerable<Type> blueprintTypes = assembly.GetTypes().Where(t => typeof (IBlueprint).IsAssignableFrom(t));
             blueprintTypes.ToList().ForEach(blueprintType =>
                 {
                     var blueprint = (IBlueprint) Activator.CreateInstance(blueprintType);

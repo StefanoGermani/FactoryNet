@@ -6,7 +6,8 @@ namespace Plant.Core.Helpers
     {
         public static T Evaluate<T>(Func<object, T> func)
         {
-            throw new NotSupportedException("This method is a place holder to get the function and should never be executed");
+            throw new NotSupportedException(
+                "This method is a place holder to get the function and should never be executed");
         }
     }
 }

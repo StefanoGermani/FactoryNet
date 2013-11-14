@@ -9,7 +9,7 @@ namespace Plant.Core.Impl
 
         public static string BluePrintKey<T>(string variation)
         {
-            return string.Format("{0}-{1}", typeof(T), variation);
+            return string.Format("{0}-{1}", typeof (T), variation);
         }
     }
 }

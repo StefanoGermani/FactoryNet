@@ -9,8 +9,8 @@ namespace Plant.Core.Exceptions
         {
             PropertyName = propertyName;
             PropertyValue = propertyValue;
-
         }
+
         public string PropertyName { get; set; }
         public object PropertyValue { get; set; }
     }

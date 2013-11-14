@@ -12,24 +12,27 @@ namespace Plant.Core.Impl
 
         public T CreateIstance<T>()
         {
-            if (_constructors.All(a => a.Key != typeof(T)))
+            if (_constructors.All(a => a.Key != typeof (T)))
             {
-                throw new TypeNotSetupException(typeof(T));
+                throw new TypeNotSetupException(typeof (T));
             }
 
-            return (T)_constructors[typeof(T)]();
+            return (T) _constructors[typeof (T)]();
         }
 
         public void Add<T>(NewExpression newExpression)
         {
-            Func<object> costructor = () => newExpression.Constructor.Invoke(newExpression.Arguments.Select(a => ((ConstantExpression)a).Value).ToArray());
+            Func<object> costructor =
+                () =>
+                newExpression.Constructor.Invoke(
+                    newExpression.Arguments.Select(a => ((ConstantExpression) a).Value).ToArray());
 
-            _constructors.Add(typeof(T), costructor);
+            _constructors.Add(typeof (T), costructor);
         }
 
         public bool ContainsType<T>()
         {
-            return _constructors.ContainsKey(typeof(T));
+            return _constructors.ContainsKey(typeof (T));
         }
 
         public bool ContainsType(Type type)

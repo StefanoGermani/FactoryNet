@@ -1,15 +1,13 @@
 namespace Plant.Tests.TestModels
 {
-  public class WriteOnceMemoryModule
-  {
-    private int? _value = null;
-    public int Value
+    public class WriteOnceMemoryModule
     {
-      get { return _value.GetValueOrDefault(); } 
-      set 
-      {
-        if (_value == null) _value = value;
-      }
+        private int? _value;
+
+        public int Value
+        {
+            get { return _value.GetValueOrDefault(); }
+            set { if (_value == null) _value = value; }
+        }
     }
-  }
 }

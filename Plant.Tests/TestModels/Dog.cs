@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Plant.Tests.TestModels
 {
@@ -9,8 +6,14 @@ namespace Plant.Tests.TestModels
     {
         public string Name { get; set; }
 
-        public string ThrowException { get { throw new Exception(); } }
+        public string ThrowException
+        {
+            get { throw new Exception(); }
+        }
 
-        public Dog ThisDog { get { return null; } }
+        public Dog ThisDog
+        {
+            get { return null; }
+        }
     }
 }

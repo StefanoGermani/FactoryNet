@@ -4,10 +4,6 @@ namespace Plant.Tests.TestModels
 {
     public class House
     {
-        public string Color { get; set; }
-        public int SquareFoot { get; set; }
-        public string Summary { get; set; }
-
         public House(string color, int squareFoot)
         {
             Color = color;
@@ -18,6 +14,10 @@ namespace Plant.Tests.TestModels
         {
             Persons = new HashSet<Person>();
         }
+
+        public string Color { get; set; }
+        public int SquareFoot { get; set; }
+        public string Summary { get; set; }
 
         public ICollection<Person> Persons { get; set; }
     }

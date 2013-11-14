@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Plant.Core;
 using Plant.Tests.TestBlueprints;
 using Plant.Tests.TestModels;
@@ -16,7 +12,7 @@ namespace Plant.Tests
         [Test]
         public void Should_Cultivate_BasePlant()
         {
-            var plant = PlantFarm.CultivateWithBlueprintsFromAssemblyOf<TestBlueprint>();
+            IPlant plant = PlantFarm.CultivateWithBlueprintsFromAssemblyOf<TestBlueprint>();
             Assert.AreEqual("Plant.Core.Impl.BasePlant", plant.GetType().ToString());
         }
 
@@ -24,14 +20,14 @@ namespace Plant.Tests
         public void Should_Cultivate_PersisterPlant()
         {
             var persister = MockRepository.GenerateMock<IPersisterSeed>();
-            var plant = PlantFarm.Cultivate(persister);
+            IPlant plant = PlantFarm.Cultivate(persister);
             Assert.AreEqual("Plant.Core.Impl.PersisterPlant", plant.GetType().ToString());
         }
 
         [Test]
         public void Should_Load_Blueprints_From_Assembly()
         {
-            var plant = PlantFarm.CultivateWithBlueprintsFromAssemblyOf<TestBlueprint>();
+            IPlant plant = PlantFarm.CultivateWithBlueprintsFromAssemblyOf<TestBlueprint>();
             Assert.AreEqual("Plant.Core.Impl.BasePlant", plant.GetType().ToString());
             Assert.AreEqual("Elaine", plant.Create<Person>().MiddleName);
         }
@@ -39,14 +35,14 @@ namespace Plant.Tests
 
     namespace TestBlueprints
     {
-        class TestBlueprint : IBlueprint
+        internal class TestBlueprint : IBlueprint
         {
             public void SetupPlant(IPlant plant)
             {
                 plant.Define(() => new Person
-                {
-                    MiddleName = "Elaine"
-                });
+                    {
+                        MiddleName = "Elaine"
+                    });
             }
         }
     }
