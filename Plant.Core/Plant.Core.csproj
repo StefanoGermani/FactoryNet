@@ -58,7 +58,7 @@
     <Compile Include="Impl\PropertyData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Exceptions\PropertyNotFoundException.cs" />
-    <Compile Include="Helpers\Sequence.cs" />
+    <Compile Include="Sequence.cs" />
     <Compile Include="Exceptions\TypeNotSetupException.cs" />
   </ItemGroup>
   <ItemGroup>

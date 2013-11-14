@@ -1,8 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NUnit.Framework;
 using Plant.Core;
 using Plant.Core.Exceptions;
-using Plant.Core.Helpers;
 using Plant.Tests.TestModels;
 using Rhino.Mocks;
 
@@ -26,20 +26,20 @@ namespace Plant.Tests
 
         private static void OnPropertyPopulation(House h)
         {
-            h.Persons.Add(new Person {FirstName = "Pablo"});
+            h.Persons.Add(new Person { FirstName = "Pablo" });
         }
 
         private static void OnPropertyPopulationVariation(House h)
         {
             h.Persons.Clear();
-            h.Persons.Add(new Person {FirstName = "Pedro"});
+            h.Persons.Add(new Person { FirstName = "Pedro" });
         }
 
         [Test]
         public void Can_Create_Two_Different_House()
         {
-            _plant.Define(() => new House {Color = "blue", SquareFoot = 50});
-            _plant.Define(() => new Person {FirstName = "Leo"});
+            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _plant.Define(() => new Person { FirstName = "Leo" });
 
             var house = _plant.Create<House>();
             var redHouse = _plant.Create<House>(h => h.Color = "red");
@@ -54,8 +54,8 @@ namespace Plant.Tests
             var dummy = MockRepository.GenerateStub<IDummy>();
             dummy.Expect(d => d.Test()).Repeat.Twice();
 
-            _plant.Define(() => new House {Color = "blue", SquareFoot = 50});
-            _plant.Define(() => new Person {FirstName = "Leo"});
+            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _plant.Define(() => new Person { FirstName = "Leo" });
 
             _plant.BluePrintCreated += (sender, e) => dummy.Test();
             _plant.Create<House>();
@@ -67,8 +67,8 @@ namespace Plant.Tests
         [Test]
         public void Should_Build_Relation()
         {
-            _plant.Define(() => new House {Color = "blue", SquareFoot = 50});
-            _plant.Define(() => new Person {FirstName = "Leo"});
+            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _plant.Define(() => new Person { FirstName = "Leo" });
 
             var person = _plant.Build<Person>();
 
@@ -78,7 +78,7 @@ namespace Plant.Tests
         [Test]
         public void Should_Call_AfterCreationCallback_After_Building()
         {
-            _plant.Define(() => new Person {FirstName = "Angus", LastName = "MacGyver"},
+            _plant.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
                           (p) => p.FullName = p.FirstName + p.LastName);
             var builtPerson = _plant.Build<Person>();
             Assert.AreEqual(null, builtPerson.FullName);
@@ -87,7 +87,7 @@ namespace Plant.Tests
         [Test]
         public void Should_Call_AfterCreationCallback_After_Creation()
         {
-            _plant.Define(() => new Person {FirstName = "Angus", LastName = "MacGyver"},
+            _plant.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
                           (p) => p.FullName = p.FirstName + p.LastName);
             var builtPerson = _plant.Create<Person>();
             Assert.AreEqual("AngusMacGyver", builtPerson.FullName);
@@ -108,20 +108,27 @@ namespace Plant.Tests
         {
             _plant.Define(() => new Person());
 
-            Assert.IsInstanceOf(typeof (Person), _plant.Create<Person>());
+            Assert.IsInstanceOf(typeof(Person), _plant.Create<Person>());
         }
 
         [Test]
         public void Should_Create_Instance_With_Null_Value()
         {
-            _plant.Define(() => new Person {FirstName = "Barbara", LastName = (string) null});
+            _plant.Define(() => new Person { FirstName = "Barbara", LastName = (string)null });
             Assert.IsNull(_plant.Create<Person>().LastName);
+        }
+
+        [Test]
+        public void Should_Create_Instance_With_Not_Constant_Value()
+        {
+            _plant.Define(() => new House(new Random().Next().ToString(), new Random().Next()));
+            Assert.IsNotNull(_plant.Create<House>());
         }
 
         [Test]
         public void Should_Create_Instance_With_Requested_Properties()
         {
-            _plant.Define(() => new Person {FirstName = ""});
+            _plant.Define(() => new Person { FirstName = "" });
             Assert.AreEqual("James", _plant.Create<Person>(p => p.FirstName = "James").FirstName);
         }
 
@@ -129,7 +136,7 @@ namespace Plant.Tests
         public void Should_Create_Objects_In_AfterCreationCallback()
         {
             _plant.Define(() => new House());
-            _plant.Define(() => new Person {FirstName = "Angus", LastName = "MacGyver"},
+            _plant.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
                           (p) => p.HouseWhereILive = _plant.Create<House>(x => x.Color = "Red"));
             var builtPerson = _plant.Create<Person>();
 
@@ -140,20 +147,20 @@ namespace Plant.Tests
         [Test]
         public void Should_Create_Variation_Of_Specified_Type()
         {
-            _plant.Define(() => new Person {FirstName = ""});
-            _plant.Define("My", () => new Person {FirstName = "My"});
-            _plant.Define("Her", () => new Person {FirstName = "Her"});
+            _plant.Define(() => new Person { FirstName = "" });
+            _plant.Define("My", () => new Person { FirstName = "My" });
+            _plant.Define("Her", () => new Person { FirstName = "Her" });
 
-            Assert.IsInstanceOf(typeof (Person), _plant.Create<Person>());
-            Assert.IsInstanceOf(typeof (Person), _plant.Create<Person>("My"));
-            Assert.IsInstanceOf(typeof (Person), _plant.Create<Person>("Her"));
+            Assert.IsInstanceOf(typeof(Person), _plant.Create<Person>());
+            Assert.IsInstanceOf(typeof(Person), _plant.Create<Person>("My"));
+            Assert.IsInstanceOf(typeof(Person), _plant.Create<Person>("Her"));
         }
 
         [Test]
         public void Should_Create_Variation_Of_Specified_Type_With_Correct_Data()
         {
-            _plant.Define(() => new Person {FirstName = ""});
-            _plant.Define("My", () => new Person {FirstName = "My"});
+            _plant.Define(() => new Person { FirstName = "" });
+            _plant.Define("My", () => new Person { FirstName = "My" });
 
             var person = _plant.Create<Person>("My");
             Assert.AreEqual("My", person.FirstName);
@@ -162,8 +169,8 @@ namespace Plant.Tests
         [Test]
         public void Should_Create_Variation_With_Extension()
         {
-            _plant.Define(() => new House {Color = "blue"}, OnPropertyPopulation);
-            _plant.Define("My", () => new House {Color = "My"}, OnPropertyPopulationVariation);
+            _plant.Define(() => new House { Color = "blue" }, OnPropertyPopulation);
+            _plant.Define("My", () => new House { Color = "My" }, OnPropertyPopulationVariation);
 
             Assert.AreEqual(_plant.Create<House>().Persons.First().FirstName, "Pablo");
             Assert.AreEqual(_plant.Create<House>("My").Persons.First().FirstName, "Pedro");
@@ -186,14 +193,14 @@ namespace Plant.Tests
         [Test]
         public void Should_Not_Evaluate_Property_Without_Setter()
         {
-            Assert.DoesNotThrow(() => _plant.Define(() => new Dog {Name = "Bob"}));
+            Assert.DoesNotThrow(() => _plant.Define(() => new Dog { Name = "Bob" }));
         }
 
         [Test]
         public void Should_Not_Prefill_Relation_Defined()
         {
-            _plant.Define(() => new House {Color = "blue", SquareFoot = 50});
-            _plant.Define(() => new Person {FirstName = "Leo", HouseWhereILive = new House {Color = "Violet"}});
+            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _plant.Define(() => new Person { FirstName = "Leo", HouseWhereILive = new House { Color = "Violet" } });
 
             var person = _plant.Create<Person>();
 
@@ -203,7 +210,7 @@ namespace Plant.Tests
         [Test]
         public void Should_Not_Try_To_Populate_Property_Without_Setter()
         {
-            _plant.Define(() => new Dog {Name = "Bob"});
+            _plant.Define(() => new Dog { Name = "Bob" });
 
             Assert.DoesNotThrow(() => _plant.Create<Dog>());
         }
@@ -211,14 +218,14 @@ namespace Plant.Tests
         [Test]
         public void Should_Only_Set_Properties_Once()
         {
-            _plant.Define(() => new WriteOnceMemoryModule {Value = 5000});
+            _plant.Define(() => new WriteOnceMemoryModule { Value = 5000 });
             Assert.AreEqual(10, _plant.Create<WriteOnceMemoryModule>(x => x.Value = 10).Value);
         }
 
         [Test]
         public void Should_Override_Default_Constructor_Arguments()
         {
-            _plant.Define(() => new House {Color = "Red", SquareFoot = 3000});
+            _plant.Define(() => new House { Color = "Red", SquareFoot = 3000 });
 
             Assert.Fail();
             //Assert.AreEqual("Blue", _plant.Create<House>(x =>  x.Color = "Blue").Color);
@@ -227,8 +234,8 @@ namespace Plant.Tests
         [Test]
         public void Should_Prefill_Relation()
         {
-            _plant.Define(() => new House {Color = "blue", SquareFoot = 50});
-            _plant.Define(() => new Person {FirstName = "Leo"});
+            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _plant.Define(() => new Person { FirstName = "Leo" });
 
             var house = _plant.Create<House>();
             var person = _plant.Create<Person>();
@@ -242,19 +249,19 @@ namespace Plant.Tests
         [Test]
         public void Should_Set_User_Properties_That_Are_Not_Defaulted()
         {
-            _plant.Define(() => new Person {FirstName = "Barbara"});
+            _plant.Define(() => new Person { FirstName = "Barbara" });
             Assert.AreEqual("Brechtel", _plant.Create<Person>(p => p.LastName = "Brechtel").LastName);
         }
 
         [Test]
-        [ExpectedException(typeof (WrongDefinitionTypeException))]
+        [ExpectedException(typeof(WrongDefinitionTypeException))]
         public void Should_Throw_Exception_If_Not_An_MemberInit_Or_New_Function()
         {
             _plant.Define(() => string.Empty);
         }
 
         [Test]
-        [ExpectedException(typeof (TypeNotSetupException))]
+        [ExpectedException(typeof(TypeNotSetupException))]
         public void Should_Throw_TypeNotSetupException_When_Trying_To_Create_Type_That_Is_Not_Setup()
         {
             _plant.Create<Person>(z => z.FirstName = "Barbara");
@@ -263,7 +270,7 @@ namespace Plant.Tests
         [Test]
         public void Should_Use_Default_Instance_Values()
         {
-            _plant.Define(() => new Person {FirstName = "Barbara"});
+            _plant.Define(() => new Person { FirstName = "Barbara" });
             Assert.AreEqual("Barbara", _plant.Create<Person>().FirstName);
         }
 
@@ -276,6 +283,21 @@ namespace Plant.Tests
                 });
             Assert.AreEqual("FirstName0", _plant.Create<Person>().FirstName);
             Assert.AreEqual("FirstName1", _plant.Create<Person>().FirstName);
+        }
+
+        [Test]
+        public void Should_increment_values_in_two_sequences()
+        {
+            _plant.Define(() => new Person
+            {
+                FirstName = Sequence.Evaluate((i) => "FirstName" + i),
+                LastName = Sequence.Evaluate((i) => "LastName" + i),
+            });
+
+            var person = _plant.Create<Person>();
+
+            Assert.AreEqual("FirstName0", person.FirstName);
+            Assert.AreEqual("LastName0", person.LastName);
         }
     }
 }

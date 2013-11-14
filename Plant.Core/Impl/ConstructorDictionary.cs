@@ -22,12 +22,17 @@ namespace Plant.Core.Impl
 
         public void Add<T>(NewExpression newExpression)
         {
-            Func<object> costructor =
-                () =>
-                newExpression.Constructor.Invoke(
-                    newExpression.Arguments.Select(a => ((ConstantExpression) a).Value).ToArray());
+            Func<object> costructor = () => newExpression.Constructor.Invoke(newExpression.Arguments.Select(a => ExecuteExpression(a)).ToArray());
 
-            _constructors.Add(typeof (T), costructor);
+            _constructors.Add(typeof(T), costructor);
+        }
+
+        private object ExecuteExpression(Expression expression)
+        {
+            LambdaExpression lambda = Expression.Lambda(expression);
+            Delegate compiled = lambda.Compile();
+
+            return compiled.DynamicInvoke(null);
         }
 
         public bool ContainsType<T>()

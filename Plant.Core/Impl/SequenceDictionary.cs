@@ -13,18 +13,23 @@ namespace Plant.Core.Impl
         {
             int value;
 
-            if (_sequenceValues.ContainsKey(typeof (T)) && _sequenceValues[typeof (T)].ContainsKey(propertyInfo))
+            if (!_sequenceValues.ContainsKey(typeof(T)))
             {
-                value = _sequenceValues[typeof (T)][propertyInfo];
+                _sequenceValues.Add(typeof(T), new Dictionary<PropertyInfo, int>());
+            }
+
+            if (_sequenceValues[typeof(T)].ContainsKey(propertyInfo))
+            {
+                value = _sequenceValues[typeof(T)][propertyInfo];
             }
             else
             {
-                _sequenceValues.Add(typeof (T), new Dictionary<PropertyInfo, int>());
-                _sequenceValues[typeof (T)].Add(propertyInfo, value = 0);
+
+                _sequenceValues[typeof(T)].Add(propertyInfo, value = 0);
             }
 
 
-            _sequenceValues[typeof (T)][propertyInfo]++;
+            _sequenceValues[typeof(T)][propertyInfo]++;
 
             return value;
         }

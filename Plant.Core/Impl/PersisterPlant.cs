@@ -26,6 +26,10 @@ namespace Plant.Core.Impl
                     throw new PersisterException();
                 }
             }
+            catch (PersisterException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new PersisterException(ex);

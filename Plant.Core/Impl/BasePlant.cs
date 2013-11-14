@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Plant.Core.Exceptions;
-using Plant.Core.Helpers;
 
 namespace Plant.Core.Impl
 {
@@ -53,7 +52,7 @@ namespace Plant.Core.Impl
 
         public virtual T CreateForChild<T>()
         {
-            string bluePrintKey = BluePrintKey<T>(null);
+            string bluePrintKey = BlueprintKeyGenerator.BluePrintKey<T>();
             T constructedObject;
 
             if (_createdBluePrints.ContainsKey(bluePrintKey))
@@ -189,11 +188,6 @@ namespace Plant.Core.Impl
         public virtual void Define<T>(string variation, Expression<Func<T>> definition, Action<T> afterCreation)
         {
             Define(definition, afterCreation);
-        }
-
-        protected string BluePrintKey<T>(string variation)
-        {
-            return string.Format("{0}-{1}", typeof(T), variation);
         }
 
         private void SetProperties<T>(IDictionary<PropertyData, Expression> properties, T instance)
