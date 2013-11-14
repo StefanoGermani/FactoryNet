@@ -13,6 +13,11 @@ namespace Plant.Tests
     [TestFixture]
     public class BasePlantTest
     {
+        public interface IDummy
+        {
+            void Test();
+        }
+
         private IPlant _plant;
 
         [SetUp]
@@ -47,23 +52,17 @@ namespace Plant.Tests
         }
 
         [Test]
-        public void Should_Populate_Properties()
+        public void Should_Use_Default_Instance_Values()
         {
-            _plant.Define(() => new House() { Color = "Red" });
-
-            var house = _plant.Create<House>();
-
-            Assert.AreEqual("Red", house.Color);
+            _plant.Define(() => new Person { FirstName = "Barbara" });
+            Assert.AreEqual("Barbara", _plant.Create<Person>().FirstName);
         }
 
         [Test]
-        public void Should_Override_With_Custom_Properties()
+        public void Should_Create_Instance_With_Requested_Properties()
         {
-            _plant.Define(() => new House() { Color = "Red" });
-
-            var house = _plant.Create<House>(x => x.Color = "Green");
-
-            Assert.AreEqual("Green", house.Color);
+            _plant.Define(() => new Person { FirstName = "" });
+            Assert.AreEqual("James", _plant.Create<Person>(p => p.FirstName = "James").FirstName);
         }
 
         [Test]
@@ -93,59 +92,60 @@ namespace Plant.Tests
             Assert.DoesNotThrow(() => _plant.Create<Dog>());
         }
 
-        //[Test]
-        //public void Is_Event_Created_Called()
-        //{
-        //    plant.DefinePropertiesOf(new House() { Color = "blue", SquareFoot = 50 });
-        //    plant.DefinePropertiesOf(new Person() { FirstName = "Leo" });
+        [Test]
+        public void Is_Event_Created_Called()
+        {
+            var dummy = MockRepository.GenerateStub<IDummy>();
+            dummy.Expect(d => d.Test()).Repeat.Twice();
 
-        //    plant.BluePrintCreated += plant_BluePrintCreated;
-        //    plant.Create<House>();
-        //    plant.Create<Person>();
-        //}
+            _plant.Define(() => new House() { Color = "blue", SquareFoot = 50 });
+            _plant.Define(() => new Person() { FirstName = "Leo" });
 
-        //void plant_BluePrintCreated(object sender, BluePrintEventArgs e)
-        //{
-        //    Assert.IsNotNull(e.ObjectConstructed);
-        //}
+            _plant.BluePrintCreated += (sender, e) => dummy.Test();
+            _plant.Create<House>();
+            _plant.Create<Person>();
 
-        //[Test]
-        //public void Should_Prefill_Relation()
-        //{
-        //    plant.DefinePropertiesOf<House>(new House() { Color = "blue", SquareFoot = 50 });
-        //    plant.DefinePropertiesOf<Person>(new Person() { FirstName = "Leo" });
+            dummy.VerifyAllExpectations();
+        }
 
-        //    var house = plant.Create<House>();
-        //    var person = plant.Create<Person>();
+        [Test]
+        public void Should_Prefill_Relation()
+        {
+            _plant.Define(() => new House() { Color = "blue", SquareFoot = 50 });
+            _plant.Define(() => new Person() { FirstName = "Leo" });
 
-        //    Assert.IsNotNull(person.HouseWhereILive);
-        //    Assert.AreEqual(house, person.HouseWhereILive);
-        //    Assert.AreEqual(house.Color, person.HouseWhereILive.Color);
-        //    Assert.AreEqual(house.SquareFoot, person.HouseWhereILive.SquareFoot);
-        //}
+            var house = _plant.Create<House>();
+            var person = _plant.Create<Person>();
 
-        //[Test]
-        //public void Should_Not_Prefill_Relation_Defined()
-        //{
-        //    plant.DefinePropertiesOf(new House() { Color = "blue", SquareFoot = 50 });
-        //    plant.DefinePropertiesOf(new Person() { FirstName = "Leo", HouseWhereILive = new House() { Color = "Violet" } });
+            Assert.IsNotNull(person.HouseWhereILive);
+            Assert.AreEqual(house, person.HouseWhereILive);
+            Assert.AreEqual(house.Color, person.HouseWhereILive.Color);
+            Assert.AreEqual(house.SquareFoot, person.HouseWhereILive.SquareFoot);
+        }
 
-        //    var house = plant.Create<House>();
-        //    var person = plant.Create<Person>();
+        [Test]
+        public void Should_Not_Prefill_Relation_Defined()
+        {
+            _plant.Define(() => new House() { Color = "blue", SquareFoot = 50 });
+            _plant.Define(() => new Person() { FirstName = "Leo", HouseWhereILive = new House() { Color = "Violet" } });
 
-        //    Assert.AreEqual("Violet", person.HouseWhereILive.Color);
-        //}
+            var person = _plant.Create<Person>();
 
-        //[Test]
-        //public void Should_Build_Relation()
-        //{
-        //    plant.DefinePropertiesOf(new House() { Color = "blue", SquareFoot = 50 });
-        //    plant.DefinePropertiesOf(new Person() { FirstName = "Leo" });
+            Assert.AreEqual("Violet", person.HouseWhereILive.Color);
+        }
 
-        //    var person = plant.Build<Person>();
+        [Test]
+        public void Should_Build_Relation()
+        {
+            _plant.Define(() => new House() { Color = "blue", SquareFoot = 50 });
+            _plant.Define(() => new Person() { FirstName = "Leo" });
 
-        //    Assert.IsNotNull(person.HouseWhereILive);
-        //}
+            var person = _plant.Build<Person>();
+
+            Assert.IsNotNull(person.HouseWhereILive);
+        }
+
+        #region Variations
 
         //[Test]
         //public void Should_Create_Variation_Of_Specified_Type()
@@ -190,49 +190,14 @@ namespace Plant.Tests
         //    Assert.AreEqual("My", person.FirstName);
         //}
 
+        #endregion
 
-        //[Test]
-        //public void Should_Create_Instance_With_Requested_Properties()
-        //{
-        //    plant.DefinePropertiesOf<Person>(new { FirstName = "" });
-        //    Assert.AreEqual("James", plant.Create<Person>(new { FirstName = "James" }).FirstName);
-        //}
-
-        //[Test]
-        //public void Should_Use_Default_Instance_Values()
-        //{
-        //    plant.DefinePropertiesOf<Person>(new { FirstName = "Barbara" });
-        //    Assert.AreEqual("Barbara", plant.Create<Person>().FirstName);
-        //}
-
-        //[Test]
-        //public void Should_Create_Instance_With_Null_Value()
-        //{
-        //    plant.DefinePropertiesOf<Person>(new { FirstName = "Barbara", LastName = (string)null });
-        //    Assert.IsNull(plant.Create<Person>().LastName);
-        //}
-
-        //[Test]
-        //public void Should_Create_Instance_With_Default_Properties_Specified_By_Instance()
-        //{
-        //    plant.DefinePropertiesOf(new Person { FirstName = "James" });
-        //    Assert.AreEqual("James", plant.Create<Person>().FirstName);
-        //}
-
-        //[Test]
-        //public void Should_Create_Instance_With_Requested_Properties_Specified_By_Instance()
-        //{
-        //    plant.DefinePropertiesOf(new Person { FirstName = "David" });
-        //    Assert.AreEqual("James", plant.Create(new Person { FirstName = "James" }).FirstName);
-        //}
-
-        //[Test]
-        //[ExpectedException(typeof(PropertyNotFoundException))]
-        //public void Should_Throw_PropertyNotFound_Exception_When_Given_Invalid_Property()
-        //{
-        //    plant.DefinePropertiesOf<Person>(new { Foo = "" });
-        //    plant.Create<Person>();
-        //}
+        [Test]
+        public void Should_Create_Instance_With_Null_Value()
+        {
+            _plant.Define(() => new Person { FirstName = "Barbara", LastName = (string)null });
+            Assert.IsNull(_plant.Create<Person>().LastName);
+        }
 
         [Test]
         [ExpectedException(typeof(TypeNotSetupException))]
@@ -241,146 +206,83 @@ namespace Plant.Tests
             _plant.Create<Person>(z => z.FirstName = "Barbara");
         }
 
-        //[Test]
-        //[ExpectedException(typeof(ConstructorNotFoundException))]
-        //public void Should_Throw_ConstructorNotFoundException_When_Constructor_Given_Invalid_Parameters()
-        //{
-        //    plant.DefineConstructionOf<Person>(new { FirstName = "Barbara" });
-        //    plant.Create<Person>();
-        //}
+        [Test]
+        public void Should_Set_User_Properties_That_Are_Not_Defaulted()
+        {
+            _plant.Define(() => new Person() { FirstName = "Barbara" });
+            Assert.AreEqual("Brechtel", _plant.Create<Person>(p => p.LastName = "Brechtel").LastName);
+        }
 
+        [Test]
+        public void Should_Lazily_Evaluate_Properties()
+        {
+            string lazyMiddleName = null;
+            _plant.Define(() => new Person()
+                                   {
+                                       MiddleName = lazyMiddleName
+                                   });
 
-        //[Test]
-        //public void Should_Set_User_Properties_That_Are_Not_Defaulted()
-        //{
-        //    plant.DefinePropertiesOf<Person>(new { FirstName = "Barbara" });
-        //    Assert.AreEqual("Brechtel", plant.Create<Person>(new { LastName = "Brechtel" }).LastName);
-        //}
+            Assert.AreEqual(null, _plant.Create<Person>().MiddleName);
+            lazyMiddleName = "Johnny";
+            Assert.AreEqual("Johnny", _plant.Create<Person>().MiddleName);
+        }
 
-        //[Test]
-        //public void Should_Lazily_Evaluate_Delegate_Properties()
-        //{
-        //    string lazyMiddleName = null;
-        //    plant.DefinePropertiesOf<Person>(new
-        //                           {
-        //                               MiddleName = new LazyProperty<string>(() => lazyMiddleName)
-        //                           });
+        [Test]
+        public void Should_Override_Default_Constructor_Arguments()
+        {
+            _plant.Define(() => new House { Color = "Red", SquareFoot = 3000 });
 
-        //    Assert.AreEqual(null, plant.Create<Person>().MiddleName);
-        //    lazyMiddleName = "Johnny";
-        //    Assert.AreEqual("Johnny", plant.Create<Person>().MiddleName);
-        //}
+            Assert.Fail();
+            //Assert.AreEqual("Blue", _plant.Create<House>(x =>  x.Color = "Blue").Color);
+        }
 
-        //[Test]
-        //[ExpectedException(typeof(LazyPropertyHasWrongTypeException))]
-        //public void Should_Throw_LazyPropertyHasWrongTypeException_When_Lazy_Property_Definition_Returns_Wrong_Type()
-        //{
-        //    plant.DefinePropertiesOf<Person>(new
-        //    {
-        //        MiddleName = new LazyProperty<int>(() => 5)
-        //    });
+        [Test]
+        public void Should_Only_Set_Properties_Once()
+        {
+            _plant.Define(() => new WriteOnceMemoryModule { Value = 5000 });
+            Assert.AreEqual(10, _plant.Create<WriteOnceMemoryModule>(x => x.Value = 10).Value);
+        }
 
-        //    plant.Create<Person>();
-        //}
+        [Test]
+        public void Should_Call_AfterCreationCallback_After_Creation()
+        {
+            _plant.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
+                (p) => p.FullName = p.FirstName + p.LastName);
+            var builtPerson = _plant.Create<Person>();
+            Assert.AreEqual("AngusMacGyver", builtPerson.FullName);
+        }
 
-        //[Test]
-        //public void Should_Create_Objects_Via_Constructor()
-        //{
-        //    plant.DefineConstructionOf<Car>(new { Make = "Toyota" });
-        //    Assert.AreEqual("Toyota", plant.Create<Car>().Make);
-        //}
+        [Test]
+        public void Should_Call_AfterCreationCallback_After_Building()
+        {
+            _plant.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
+                (p) => p.FullName = p.FirstName + p.LastName);
+            var builtPerson = _plant.Build<Person>();
+            Assert.AreEqual(null, builtPerson.FullName);
+        }
 
-        //[Test]
-        //public void Should_Send_Constructor_Arguments_In_Correct_Order()
-        //{
-        //    plant.DefineConstructionOf<Book>(new { Publisher = "Tor", Author = "Robert Jordan" });
-        //    Assert.AreEqual("Tor", plant.Create<Book>().Publisher);
-        //    Assert.AreEqual("Robert Jordan", plant.Create<Book>().Author);
-        //}
+        [Test]
+        public void Should_Create_Objects_In_AfterCreationCallback()
+        {
+            _plant.Define(() => new House());
+            _plant.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
+                (p) => p.HouseWhereILive = _plant.Create<House>(x => x.Color = "Red"));
+            var builtPerson = _plant.Create<Person>();
 
-        //[Test]
-        //public void Should_Override_Default_Constructor_Arguments()
-        //{
-        //    plant.DefineConstructionOf<House>(new { Color = "Red", SquareFoot = 3000 });
+            Assert.NotNull(builtPerson.HouseWhereILive);
+            Assert.AreEqual(builtPerson.HouseWhereILive.Color, "Red");
+        }
 
-        //    Assert.AreEqual("Blue", plant.Create<House>(new { Color = "Blue" }).Color);
-        //}
-
-        //[Test]
-        //public void Should_Only_Set_Properties_Once()
-        //{
-        //    plant.DefinePropertiesOf<WriteOnceMemoryModule>(new { Value = 5000 });
-        //    Assert.AreEqual(10, plant.Create<WriteOnceMemoryModule>(new { Value = 10 }).Value);
-        //}
-
-        //[Test]
-        //public void Should_Call_AfterBuildCallback_After_Properties_Populated()
-        //{
-        //    plant.DefinePropertiesOf(new Person { FirstName = "Angus", LastName = "MacGyver" },
-        //        (p) => p.FullName = p.FirstName + p.LastName);
-        //    var builtPerson = plant.Create<Person>();
-        //    Assert.AreEqual(builtPerson.FullName, "AngusMacGyver");
-        //}
-
-        ////[Test]
-        ////public void Should_Call_AfterBuildCallback_After_Constructor_Population()
-        ////{
-        ////    plant.DefineConstructionOf<House>(new { Color = "Red", SquareFoot = 3000 },
-        ////        (h) => h.Summary = h.Color + h.SquareFoot);
-
-        ////    Assert.AreEqual("Blue3000", plant.Create<House>(new { Color = "Blue" }).Summary);
-        ////}
-
-        //[Test]
-        //public void Should_Create_Objects_In_AfterBuildCallback_After_Properties_Populated()
-        //{
-        //    plant.DefinePropertiesOf(new House());
-        //    plant.DefinePropertiesOf(new Person { FirstName = "Angus", LastName = "MacGyver" },
-        //        (p) => p.HouseWhereILive = plant.Create<House>(new House() { Color = "Red" }));
-        //    var builtPerson = plant.Create<Person>();
-
-        //    Assert.NotNull(builtPerson.HouseWhereILive);
-        //    Assert.AreEqual(builtPerson.HouseWhereILive.Color, "Red");
-        //}
-
-        //[Test]
-        //public void Should_Create_Objects_In_AfterBuildCallback_After_Constructors_Populated()
-        //{
-        //    plant.DefinePropertiesOf(new Person());
-        //    plant.DefineConstructionOf<House>(new { Color = "Red", SquareFoot = 1 },
-        //        (p) => p.Persons = new[] { plant.Create<Person>(new Person() { FirstName = "John" }) });
-        //    var buildHouse = plant.Create<House>();
-
-        //    Assert.NotNull(buildHouse.Persons.First());
-        //    Assert.AreEqual(buildHouse.Persons.First().FirstName, "John");
-        //}
-
-
-
-        //[Test]
-        //public void Should_increment_values_in_a_sequence_with_property_construction()
-        //{
-        //    plant.DefinePropertiesOf<Person>(new
-        //      {
-        //          FirstName = new Sequence<string>((i) => "FirstName" + i)
-        //      });
-        //    Assert.AreEqual("FirstName0", plant.Create<Person>().FirstName);
-        //    Assert.AreEqual("FirstName1", plant.Create<Person>().FirstName);
-        //}
-
-        //[Test]
-        //public void Should_increment_values_in_a_sequence_with_ctor_construction()
-        //{
-        //    plant.DefineConstructionOf<House>(new
-        //    {
-        //        Color = new Sequence<string>((i) => "Color" + i),
-        //        SquareFoot = 10
-        //    });
-        //    Assert.AreEqual("Color0", plant.Create<House>().Color);
-        //    Assert.AreEqual("Color1", plant.Create<House>().Color);
-        //}
-
+        [Test]
+        public void Should_increment_values_in_a_sequence()
+        {
+            _plant.Define(() => new Person()
+              {
+                  FirstName = Sequence.Evaluate((i) => "FirstName" + i)
+              });
+            Assert.AreEqual("FirstName0", _plant.Create<Person>().FirstName);
+            Assert.AreEqual("FirstName1", _plant.Create<Person>().FirstName);
+        }
     }
-
 }
 

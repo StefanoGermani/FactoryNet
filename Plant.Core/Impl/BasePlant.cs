@@ -34,10 +34,10 @@ namespace Plant.Core.Impl
     internal class BasePlant : IPlant
     {
         private readonly Dictionary<string, object> _createdBluePrints = new Dictionary<string, object>();
-        private readonly IDictionary<Type, object> _postBuildActions = new Dictionary<Type, object>();
-        private readonly IDictionary<string, object> _postBuildVariationActions = new Dictionary<string, object>();
-        private readonly IDictionary<Type, int> _sequenceValues = new Dictionary<Type, int>();
+        private readonly IDictionary<Type, object> _postCreationActions = new Dictionary<Type, object>();
+        //private readonly IDictionary<string, object> _postBuildVariationActions = new Dictionary<string, object>();
 
+        private readonly SequenceDictionary _sequenceValues = new SequenceDictionary();
         private readonly ConstructorDictionary _costructors = new ConstructorDictionary();
         private readonly PropertyDictionary _properties = new PropertyDictionary();
 
@@ -54,26 +54,7 @@ namespace Plant.Core.Impl
 
         #endregion
 
-        private T CreateViaProperties<T>(IDictionary<PropertyData, object> userProperties)
-        {
-            var instance = CreateInstanceWithEmptyConstructor<T>();
-            SetProperties(_properties.Get<T>(), instance);
-            return instance;
-        }
 
-        private object GetPropertyValue<T>(object property)
-        {
-            if (property is ILazyProperty)
-                return ((ILazyProperty)property).Func.DynamicInvoke();
-            if (property is ISequence)
-                return ((ISequence)property).Func.DynamicInvoke(_sequenceValues[typeof(T)]++);
-            return property;
-        }
-
-        private T CreateInstanceWithEmptyConstructor<T>()
-        {
-            return Activator.CreateInstance<T>();
-        }
 
         public virtual T CreateForChild<T>()
         {
@@ -90,90 +71,83 @@ namespace Plant.Core.Impl
 
         public virtual T Build<T>()
         {
-            return Create<T>(null, null, false);
+            return Build<T>(null);
         }
 
-        public virtual T Build<T>(string variation)
-        {
-            return Create<T>(null, variation, false);
-        }
+        //public virtual T Build<T>(string variation)
+        //{
+        //    return Create<T>(null, variation, false);
+        //}
 
         public virtual T Build<T>(Action<T> userSpecifiedProperties)
         {
-            return Create<T>(userSpecifiedProperties, null, false);
+            var constructedObject = _costructors.CreateIstance<T>();
+
+            if (_properties.ContainsKey<T>())
+                SetProperties(_properties.Get<T>(), constructedObject);
+
+            if (userSpecifiedProperties != null)
+            {
+                userSpecifiedProperties.Invoke(constructedObject);
+            }
+
+            // We should check if for the object properties we have a creation strategy and call create on that one.
+            // Also if the property has a value, don't override.
+            foreach (var prop in constructedObject.GetType().GetProperties())
+            {
+                if (!_costructors.ContainsType(prop.PropertyType) || prop.GetValue(constructedObject, null) != null)
+                    continue;
+
+                // check if property has a setter
+                if (prop.GetSetMethod() == null)
+                    continue;
+
+                var value = this.GetType().
+                    GetMethod("CreateForChild").
+                    MakeGenericMethod(prop.PropertyType).
+                    Invoke(this, null);
+
+                prop.SetValue(constructedObject, value, null);
+            }
+
+            return constructedObject;
         }
 
         public virtual T Create<T>()
         {
-            return Create<T>(null, null, true);
+            return Create<T>(null);
         }
 
-        public virtual T Create<T>(string variation)
-        {
-            return Create<T>(null, variation, true);
-        }
+        //public virtual T Create<T>(string variation)
+        //{
+        //    return Create<T>(null, variation, true);
+        //}
+
+        //public virtual T Create<T>(Action<T> userSpecifiedProperties)
+        //{
+        //    return Create<T>(userSpecifiedProperties, null, true);
+        //}
 
         public virtual T Create<T>(Action<T> userSpecifiedProperties)
         {
-            return Create<T>(userSpecifiedProperties, null, true);
-        }
 
-        public virtual T Create<T>(Action<T> userSpecifiedProperties, string variation, bool created)
-        {
-            var instance = _costructors.CreateIstance<T>();
+            var constructedObject = Build(userSpecifiedProperties);
 
-            if (_properties.ContainsKey<T>())
-                SetProperties(_properties.Get<T>(), instance);
 
-            if (userSpecifiedProperties != null)
-            {
-                userSpecifiedProperties.Invoke(instance);
-            }
+            var bluePrintKey = BlueprintKeyGenerator.BluePrintKey<T>();
 
-            return instance;
+            OnBluePrintCreated(new BluePrintEventArgs(constructedObject));
 
-            //T constructedObject = default(T);
-            //if (StrategyFor<T>() == CreationStrategy.Constructor)
-            //    constructedObject = CreateViaConstructor<T>(userSpecifiedPropertyList);
-            //else
-            //constructedObject = CreateViaProperties<T>(userSpecifiedPropertyList);
+            if (!_createdBluePrints.ContainsKey(bluePrintKey))
+                _createdBluePrints.Add(bluePrintKey, constructedObject);
 
-            // We should check if for the object properties we have a creation strategy and call create on that one.
-            // Also if the property has a value, don't override.
-            //foreach (var prop in constructedObject.GetType().GetProperties())
-            //{
-            //    if (/*StrategyFor(prop.PropertyType) == null ||*/ prop.GetValue(constructedObject, null) != null)
-            //        continue;
-
-            //    // check if property has a setter
-            //    if (prop.GetSetMethod() == null)
-            //        continue;
-
-            //    var value = this.GetType().
-            //        GetMethod("CreateForChild").
-            //        MakeGenericMethod(prop.PropertyType).
-            //        Invoke(this, null);
-
-            //    prop.SetValue(constructedObject, value, null);
-            //}
-
-            //UpdateProperties(constructedObject, variation);
-
-            //string bluePrintKey = BluePrintKey<T>(variation);
-
-            //if (created)
-            //    OnBluePrintCreated(new BluePrintEventArgs(constructedObject));
-
-            //if (!_createdBluePrints.ContainsKey(bluePrintKey))
-            //    _createdBluePrints.Add(bluePrintKey, constructedObject);
-
-            //if (_postBuildActions.ContainsKey(typeof(T)))
-            //    ((Action<T>)_postBuildActions[typeof(T)])(constructedObject);
+            if (_postCreationActions.ContainsKey(typeof(T)))
+                ((Action<T>)_postCreationActions[typeof(T)])(constructedObject);
 
             //if (_postBuildVariationActions.ContainsKey(bluePrintKey))
             //    ((Action<T>)_postBuildVariationActions[bluePrintKey])(constructedObject);
 
-            //return constructedObject;
+            return constructedObject;
         }
 
         protected string BluePrintKey<T>(string variation)
@@ -193,51 +167,36 @@ namespace Plant.Core.Impl
         {
             properties.Keys.ToList().ForEach(property =>
               {
-                  var instanceProperty = instance.GetType().GetProperties().FirstOrDefault(prop => prop.Name == property.Name);
-                  if (instanceProperty == null) throw new PropertyNotFoundException(property.Name, properties[property]);
+                  var propertyInfo = instance.GetType().GetProperties().FirstOrDefault(prop => prop.Name == property.Name);
+                  if (propertyInfo == null) throw new PropertyNotFoundException(property.Name, properties[property]);
 
-                  var value = properties[property];
-                  if (value == null)
-                      return;
-                  if (value is ILazyProperty)
-                      AssignLazyPropertyResult(instance, instanceProperty, value);
-                  else if (value is ISequence)
-                      AssignSequenceResult(instance, instanceProperty, value, _sequenceValues[typeof(T)]);
-                  else if (value.NodeType == ExpressionType.Constant)
-                      instanceProperty.SetValue(instance, ((ConstantExpression)value).Value, null);
+                  var expression = properties[property];
+
+                  var callExpression = expression as MethodCallExpression;
+
+                  if (callExpression != null && callExpression.Method.DeclaringType == typeof(Sequence))
+                  {
+                      var sequenceNumber = _sequenceValues.GetSequenceValue<T>(propertyInfo);
+
+                      var compiled = ((LambdaExpression) callExpression.Arguments[0]).Compile();
+
+                      propertyInfo.SetValue(instance, compiled.DynamicInvoke(sequenceNumber), null);
+                  }
+                  else
+                  {
+                      var lambda = Expression.Lambda(expression);
+                      var compiled = lambda.Compile();
+
+                      propertyInfo.SetValue(instance, compiled.DynamicInvoke(null), null);
+                  }
               });
             //_sequenceValues[typeof(T)]++;
         }
 
-        private void AssignSequenceResult<T>(T instance, PropertyInfo instanceProperty, object value, int sequenceValue)
-        {
-            var sequence = (ISequence)value;
-
-            if (sequence.Func.Method.ReturnType != instanceProperty.PropertyType)
-                throw new LazyPropertyHasWrongTypeException(string.Format("Cannot assign type {0} to property {1} of type {2}",
-                  sequence.Func.Method.ReturnType,
-                  instanceProperty.Name,
-                  instanceProperty.PropertyType));
-            // I can pass in the instance as a parameter to this function, but only if I'm using property-setters
-            instanceProperty.SetValue(instance, sequence.Func.DynamicInvoke(sequenceValue), null);
-        }
-
-        private void AssignLazyPropertyResult<T>(T instance, PropertyInfo instanceProperty, object value)
-        {
-            var lazyProperty = (ILazyProperty)value;
-
-            if (lazyProperty.Func.Method.ReturnType != instanceProperty.PropertyType)
-                throw new LazyPropertyHasWrongTypeException(string.Format("Cannot assign type {0} to property {1} of type {2}",
-                  lazyProperty.Func.Method.ReturnType,
-                  instanceProperty.Name,
-                  instanceProperty.PropertyType));
-            // I can pass in the instance as a parameter to this function, but only if I'm using property-setters
-            instanceProperty.SetValue(instance, lazyProperty.Func.DynamicInvoke(), null);
-        }
 
         public virtual void Define<T>(Expression<Func<T>> definition)
         {
-            if (_costructors.ContainsKey<T>()) throw new DuplicateBlueprintException(typeof(T).Name + " is already registered. You can only register one factory per type.");
+            if (_costructors.ContainsType<T>()) throw new DuplicateBlueprintException(typeof(T).Name + " is already registered. You can only register one factory per type.");
 
             switch (definition.Body.NodeType)
             {
@@ -258,6 +217,37 @@ namespace Plant.Core.Impl
             }
         }
 
+        public virtual void Define<T>(Expression<Func<T>> definition, Action<T> afterCreation)
+        {
+            Define(definition);
 
+            _postCreationActions.Add(typeof(T), afterCreation);
+        }
+
+    }
+
+    internal class SequenceDictionary
+    {
+        readonly Dictionary<Type, Dictionary<PropertyInfo, int>> _sequenceValues = new Dictionary<Type, Dictionary<PropertyInfo, int>>();
+
+        public int GetSequenceValue<T>(PropertyInfo propertyInfo)
+        {
+            int value;
+
+            if (_sequenceValues.ContainsKey(typeof(T)) && _sequenceValues[typeof(T)].ContainsKey(propertyInfo))
+            {
+                value = _sequenceValues[typeof(T)][propertyInfo];
+            }
+            else
+            {
+                _sequenceValues.Add(typeof(T), new Dictionary<PropertyInfo, int>());
+                _sequenceValues[typeof(T)].Add(propertyInfo, value = 0);
+            }
+
+
+            _sequenceValues[typeof(T)][propertyInfo]++;
+
+            return value;
+        }
     }
 }

@@ -20,51 +20,23 @@ namespace Plant.Core.Impl
             _persisterSeed = persisterSeed;
         }
 
-        public override T Create<T>(Action<T> userSpecifiedProperties, string variation, bool created)
+
+        protected override void OnBluePrintCreated(BluePrintEventArgs e)
         {
-            var constructedObject = base.Create<T>(userSpecifiedProperties, variation, false);
+             try
+             {
+                 if (!_persisterSeed.Save(e.ObjectConstructed))
+                 {
+                     throw new PersisterException();
+                 }
 
-            if (created)
-            {
-                try
-                {
-                    if (!_persisterSeed.Save(constructedObject))
-                    {
-                        throw new PersisterException();
-                    }
+             }
+             catch (Exception ex)
+             {
+                 throw new PersisterException(ex);
+             }
 
-                }
-                catch (Exception ex)
-                {
-                    throw new PersisterException(ex);
-                }
-
-
-                //string bluePrintKey = BluePrintKey<T>(variation);
-
-                //if (_postCreationActions.ContainsKey(typeof(T)))
-                //    ((Action<T>)_postCreationActions[typeof(T)])(constructedObject);
-
-                //if (_postCreationVariationActions.ContainsKey(bluePrintKey))
-                //    ((Action<T>)_postCreationVariationActions[bluePrintKey])(constructedObject);
-            }
-
-            return constructedObject;
+            base.OnBluePrintCreated(e);
         }
-
-        //public override void DefinePropertiesOf<T>(T defaults, Action<T> afterCreation)
-        //{
-        //    base.DefinePropertiesOf(defaults);
-
-        //    _postCreationActions[typeof(T)] = afterCreation;
-        //}
-
-        //public override void DefineVariationOf<T>(string variation, object defaults, Action<T> afterCreation)
-        //{
-        //    base.DefineVariationOf<T>(variation, defaults);
-
-        //    _postCreationVariationActions[BluePrintKey<T>(variation)] = afterCreation;
-
-        //}
     }
 }

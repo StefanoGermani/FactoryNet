@@ -27,9 +27,14 @@ namespace Plant.Core.Impl
             _constructors.Add(typeof(T), costructor);
         }
 
-        public bool ContainsKey<T>()
+        public bool ContainsType<T>()
         {
             return _constructors.ContainsKey(typeof(T));
+        }
+
+        public bool ContainsType(Type type)
+        {
+            return _constructors.ContainsKey(type);
         }
     }
 }

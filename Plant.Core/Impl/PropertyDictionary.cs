@@ -12,7 +12,7 @@ namespace Plant.Core.Impl
 
         public void Add<T>(string variation, IEnumerable<MemberBinding> defaults)
         {
-            _properties.Add(BluePrintKey<T>(variation), ToPropertyList(defaults));
+            _properties.Add(BlueprintKeyGenerator.BluePrintKey<T>(variation), ToPropertyList(defaults));
         }
 
         public IDictionary<PropertyData, Expression> Get<T>()
@@ -22,17 +22,7 @@ namespace Plant.Core.Impl
 
         public IDictionary<PropertyData, Expression> Get<T>(string variation)
         {
-            return _properties[BluePrintKey<T>(variation)];
-        }
-
-        private string BluePrintKey<T>()
-        {
-            return BluePrintKey<T>(string.Empty);
-        }
-
-        private string BluePrintKey<T>(string variation)
-        {
-            return string.Format("{0}-{1}", typeof(T), variation);
+            return _properties[BlueprintKeyGenerator.BluePrintKey<T>(variation)];
         }
 
         private IDictionary<PropertyData, Expression> ToPropertyList(IEnumerable<MemberBinding> defaults)
@@ -45,12 +35,12 @@ namespace Plant.Core.Impl
 
         public void Add<T>(ReadOnlyCollection<MemberBinding> defaults)
         {
-            _properties.Add(BluePrintKey<T>(), ToPropertyList(defaults));
+            _properties.Add(BlueprintKeyGenerator.BluePrintKey<T>(), ToPropertyList(defaults));
         }
 
         public bool ContainsKey<T>()
         {
-            return _properties.ContainsKey(BluePrintKey<T>());
+            return _properties.ContainsKey(BlueprintKeyGenerator.BluePrintKey<T>());
         }
 
 

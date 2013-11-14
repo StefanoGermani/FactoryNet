@@ -2,17 +2,11 @@
 
 namespace Plant.Core.Helpers
 {
-    public interface ISequence
+    public class Sequence
     {
-        Delegate Func { get; }
-    }
-    public class Sequence<TResult> : ISequence
-    {
-        public Sequence(Func<int, TResult> func)
+        public static T Evaluate<T>(Func<object, T> func)
         {
-            Func = func;
+            throw new NotSupportedException("This method is a place holder to get the function and should never be executed");
         }
-
-        public Delegate Func { get; private set; }
     }
 }
