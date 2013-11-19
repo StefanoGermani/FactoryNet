@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9E2CBD60-B28B-45EF-A075-D3D13FA0D52B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Plant.Core</RootNamespace>
+    <AssemblyName>PlantFarm.Core</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>3</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>3</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Exceptions\WrongDefinitionTypeException.cs" />
+    <Compile Include="Impl\BasePlant.cs" />
+    <Compile Include="Impl\Dictionaries\CreatedBlueprintsDictionary.cs" />
+    <Compile Include="Impl\Dictionaries\BaseDictionary.cs" />
+    <Compile Include="Impl\Dictionaries\ConstructorDictionary.cs" />
+    <Compile Include="Exceptions\DuplicateBlueprintException.cs" />
+    <Compile Include="Impl\PersisterPlant.cs" />
+    <Compile Include="Exceptions\PersisterException.cs" />
+    <Compile Include="Impl\Dictionaries\PropertyDictionary.cs" />
+    <Compile Include="Impl\Dictionaries\SequenceDictionary.cs" />
+    <Compile Include="Impl\Dictionaries\PostCreationActionDictionary.cs" />
+    <Compile Include="IPersisterSeed.cs" />
+    <Compile Include="IPlant.cs" />
+    <Compile Include="IBlueprint.cs" />
+    <Compile Include="PlantFarm.cs" />
+    <Compile Include="Impl\PropertyData.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Exceptions\PropertyNotFoundException.cs" />
+    <Compile Include="Sequence.cs" />
+    <Compile Include="Exceptions\TypeNotSetupException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Plant.Core.nuspec" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
