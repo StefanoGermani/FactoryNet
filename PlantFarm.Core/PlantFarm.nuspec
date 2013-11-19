@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>PlantFarm</id>
-    <version>$version$</version>
+    <version>0.5.0</version>
     <title>PlantFarm</title>
     <authors>James Brechtel, Stefano Germani</authors>
     <projectUrl>https://github.com/stefanogermani/plant</projectUrl>
