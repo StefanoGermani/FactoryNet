@@ -190,13 +190,23 @@ namespace Plant.Core.Impl
         {
             properties.Keys.ToList().ForEach(property =>
                 {
-                    PropertyInfo propertyInfo =
-                        instance.GetType().GetProperties().FirstOrDefault(prop => prop.Name == property.Name);
+                    PropertyInfo propertyInfo = instance.GetType().GetProperties().FirstOrDefault(prop => prop.Name == property.Name);
                     if (propertyInfo == null) throw new PropertyNotFoundException(property.Name, properties[property]);
 
-                    Expression expression = properties[property];
+                    var expression = properties[property];
 
-                    var callExpression = expression as MethodCallExpression;
+                    MethodCallExpression callExpression;
+
+                    var unaryExpression = expression as UnaryExpression;
+
+                    if (unaryExpression != null)
+                    {
+                        callExpression = unaryExpression.Operand as MethodCallExpression;
+                    }
+                    else
+                    {
+                        callExpression = expression as MethodCallExpression;
+                    }
 
                     if (callExpression != null && callExpression.Method.DeclaringType == typeof(Sequence))
                     {
@@ -204,7 +214,9 @@ namespace Plant.Core.Impl
 
                         Delegate compiled = ((LambdaExpression)callExpression.Arguments[0]).Compile();
 
-                        propertyInfo.SetValue(instance, compiled.DynamicInvoke(sequenceNumber), null);
+                        var value = Convert.ChangeType(compiled.DynamicInvoke(sequenceNumber), propertyInfo.PropertyType);
+
+                        propertyInfo.SetValue(instance, value, null);
                     }
                     else
                     {

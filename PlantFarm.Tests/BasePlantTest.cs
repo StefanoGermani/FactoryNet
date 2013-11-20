@@ -279,25 +279,27 @@ namespace Plant.Tests
         {
             _plant.Define(() => new Person
                 {
-                    FirstName = Sequence.Evaluate((i) => "FirstName" + i)
+                    FirstName = Sequence.Evaluate((i) => string.Format("FirstName{0}", i))
                 });
             Assert.AreEqual("FirstName0", _plant.Create<Person>().FirstName);
-            Assert.AreEqual("FirstName1", _plant.Create<Person>().FirstName);
+            Assert.AreEqual("FirstName1", _plant.Create<Person>(x => x.LastName = "LastName").FirstName);
         }
 
         [Test]
-        public void Should_increment_values_in_two_sequences()
+        public void Should_increment_values_in_three_sequences()
         {
             _plant.Define(() => new Person
             {
                 FirstName = Sequence.Evaluate((i) => "FirstName" + i),
                 LastName = Sequence.Evaluate((i) => "LastName" + i),
+                Age = Sequence.Evaluate(i => i)
             });
 
             var person = _plant.Create<Person>();
 
             Assert.AreEqual("FirstName0", person.FirstName);
             Assert.AreEqual("LastName0", person.LastName);
+            Assert.AreEqual(0, person.Age);
         }
     }
 }
