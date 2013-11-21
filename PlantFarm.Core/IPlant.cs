@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using Plant.Core.Impl;
 
@@ -7,7 +8,7 @@ namespace Plant.Core
     public interface IPlant
     {
         event BluePrintCreatedEventHandler BluePrintCreated;
-        T CreateForChild<T>();
+
         IList<object> CreatedObjects { get; }
 
         T Build<T>();
