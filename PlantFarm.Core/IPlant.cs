@@ -8,6 +8,8 @@ namespace Plant.Core
     {
         event BluePrintCreatedEventHandler BluePrintCreated;
         T CreateForChild<T>();
+        IList<object> CreatedObjects { get; }
+
         T Build<T>();
         T Build<T>(string variation);
         T Build<T>(Action<T> userSpecifiedProperties);

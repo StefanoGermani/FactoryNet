@@ -32,14 +32,13 @@ namespace Plant.Core.Impl
 
     internal class BasePlant : IPlant
     {
-
-
-
         private readonly ConstructorDictionary _costructors = new ConstructorDictionary();
         private readonly PropertyDictionary _properties = new PropertyDictionary();
         private readonly SequenceDictionary _sequenceValues = new SequenceDictionary();
         private readonly PostCreationActionDictionary _postCreationActions = new PostCreationActionDictionary();
         private readonly CreatedBlueprintsDictionary _createdBluePrints = new CreatedBlueprintsDictionary();
+
+        private readonly List<object> _createdObjects = new List<object>();
 
         #region BluePrintCreated Event
 
@@ -64,6 +63,8 @@ namespace Plant.Core.Impl
 
             return constructedObject;
         }
+
+        public IList<object> CreatedObjects { get { return _createdObjects; } }
 
         public virtual T Build<T>()
         {
@@ -140,6 +141,8 @@ namespace Plant.Core.Impl
 
             if (_postCreationActions.ContainsKey<T>(variation))
                 _postCreationActions.ExecuteAction(variation, constructedObject);
+
+            _createdObjects.Add(constructedObject);
 
             return constructedObject;
         }
