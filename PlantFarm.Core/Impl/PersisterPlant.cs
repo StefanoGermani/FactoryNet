@@ -17,11 +17,11 @@ namespace Plant.Core.Impl
             _persisterSeed = persisterSeed;
         }
 
-        protected override void OnBluePrintCreated(BluePrintEventArgs e)
+        protected override void OnBluePrintCreated(ObjectEventArgs e)
         {
             try
             {
-                if (!_persisterSeed.Save(e.ObjectConstructed))
+                if (!_persisterSeed.Save(e.Object))
                 {
                     throw new PersisterException();
                 }
@@ -36,6 +36,27 @@ namespace Plant.Core.Impl
             }
 
             base.OnBluePrintCreated(e);
+        }
+
+        protected override void OnObjectDeleted(ObjectEventArgs e)
+        {
+            try
+            {
+                if (!_persisterSeed.Delete(e.Object))
+                {
+                    throw new PersisterException();
+                }
+            }
+            catch (PersisterException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new PersisterException(ex);
+            }
+
+            base.OnObjectDeleted(e);
         }
     }
 }

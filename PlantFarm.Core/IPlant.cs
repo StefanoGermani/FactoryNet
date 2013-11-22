@@ -8,6 +8,7 @@ namespace Plant.Core
     public interface IPlant
     {
         event BluePrintCreatedEventHandler BluePrintCreated;
+        event ObjectDeletedEventHandler ObjectDeleted;
 
         IList<object> CreatedObjects { get; }
 
@@ -24,5 +25,7 @@ namespace Plant.Core
         void Define<T>(string variation, Expression<Func<T>> definition);
         void Define<T>(Expression<Func<T>> definition, Action<T> afterCreation);
         void Define<T>(string variation, Expression<Func<T>> definition, Action<T> afterCreation);
+
+        void ClearCreatedObjects();
     }
 }

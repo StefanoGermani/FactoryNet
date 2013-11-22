@@ -6,7 +6,7 @@ using Plant.Core.Impl;
 namespace Plant.Tests
 {
     [TestFixture]
-    public class PropertyDataTest
+    public class PropertyDataTests
     {
         [Test]
         public void Should_Be_Equal_To_Same_PropertyData_Object()

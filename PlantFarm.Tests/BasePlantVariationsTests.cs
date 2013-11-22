@@ -9,7 +9,7 @@ using Plant.Tests.TestModels;
 namespace Plant.Tests
 {
     [TestFixture]
-    public class BasePlantVariationsTest
+    public class BasePlantVariationsTests
     {
         [SetUp]
         public void SetUp()

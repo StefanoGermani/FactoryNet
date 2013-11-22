@@ -14,11 +14,11 @@ namespace Plant.Tests
         public void SetUp()
         {
             _persister = MockRepository.GenerateMock<IPersisterSeed>();
-            plant = PlantFarm.Cultivate(_persister);
+            _plant = PlantFarm.Cultivate(_persister);
         }
 
         private IPersisterSeed _persister;
-        private IPlant plant;
+        private IPlant _plant;
 
         [Test]
         public void Should_Call_Persister_Save_Method_When_Creating_Objects()
@@ -26,8 +26,8 @@ namespace Plant.Tests
             _persister.Expect(a => a.Save(Arg<object>.Is.Anything)).Return(true);
 
 
-            plant.Define(() => new House {Color = "blue", SquareFoot = 50});
-            plant.Create<House>();
+            _plant.Define(() => new House {Color = "blue", SquareFoot = 50});
+            _plant.Create<House>();
 
             _persister.VerifyAllExpectations();
         }
@@ -35,22 +35,74 @@ namespace Plant.Tests
         [Test]
         public void Should_Not_Call_Persister_Save_Method_When_Building_Objects()
         {
-            plant.Define(() => new House {Color = "blue", SquareFoot = 50});
-            plant.Build<House>();
+            _plant.Define(() => new House {Color = "blue", SquareFoot = 50});
+            _plant.Build<House>();
 
-            _persister.AssertWasNotCalled(p => p.Save(Arg<House>.Is.Anything));
+            _persister.AssertWasNotCalled(p => p.Save(Arg<object>.Is.Anything));
         }
 
         [Test]
-        [ExpectedException(typeof (PersisterException))]
+        [ExpectedException(typeof(PersisterException))]
         public void Should_Throw_PersisterException_If_Persister_Cant_Save()
         {
             _persister.Stub(a => a.Save(Arg<House>.Is.Anything)).Return(false);
 
 
-            plant.Define(() => new House {Color = "blue", SquareFoot = 50});
-            plant.Create<House>();
+            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _plant.Create<House>();
         }
+
+        [Test]
+        [ExpectedException(typeof(PersisterException))]
+        public void Should_Throw_PersisterException_If_Persister_Save_Throw_Exception()
+        {
+            _persister.Stub(a => a.Save(Arg<House>.Is.Anything)).Throw(new Exception());
+
+
+            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _plant.Create<House>();
+        }
+
+        [Test]
+        public void Should__Call_Persister_Delete_Method_When_Clearing_Objects()
+        {
+            _persister.Stub(a => a.Save(Arg<object>.Is.Anything)).Return(true);
+            _persister.Expect(a => a.Delete(Arg<object>.Is.Anything)).Return(true);
+
+            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _plant.Create<House>();
+
+            _plant.ClearCreatedObjects();
+
+            _persister.VerifyAllExpectations();
+        }
+
+        [Test]
+        [ExpectedException(typeof(PersisterException))]
+        public void Should_Throw_PersisterException_If_Persister_Cant_Delete()
+        {
+            _persister.Stub(a => a.Delete(Arg<House>.Is.Anything)).Return(false);
+
+
+            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _plant.Create<House>();
+
+            _plant.ClearCreatedObjects();
+        }
+
+        [Test]
+        [ExpectedException(typeof(PersisterException))]
+        public void Should_Throw_PersisterException_If_Persister_Delete_Throw_Exception()
+        {
+            _persister.Stub(a => a.Delete(Arg<House>.Is.Anything)).Throw(new Exception());
+
+
+            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _plant.Create<House>();
+
+            _plant.ClearCreatedObjects();
+        }
+
 
         [Test]
         [ExpectedException(typeof (PersisterException))]
@@ -59,15 +111,5 @@ namespace Plant.Tests
             PlantFarm.Cultivate(null);
         }
 
-        [Test]
-        [ExpectedException(typeof (PersisterException))]
-        public void Should_Throw_PersisterException_If_Persister_Throw_Exception()
-        {
-            _persister.Stub(a => a.Save(Arg<House>.Is.Anything)).Throw(new Exception());
-
-
-            plant.Define(() => new House {Color = "blue", SquareFoot = 50});
-            plant.Create<House>();
-        }
     }
 }

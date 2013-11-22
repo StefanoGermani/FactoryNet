@@ -11,22 +11,24 @@ namespace Plant.Core.Impl
 
     #region Events
 
-    public class BluePrintEventArgs : EventArgs
+    public class ObjectEventArgs : EventArgs
     {
-        private readonly object _objectConstructed;
+        private readonly object _object;
 
-        public BluePrintEventArgs(object objectConstructed)
+        public ObjectEventArgs(object currentObject)
         {
-            _objectConstructed = objectConstructed;
+            _object = currentObject;
         }
 
-        public object ObjectConstructed
+        public object Object
         {
-            get { return _objectConstructed; }
+            get { return _object; }
         }
     }
 
-    public delegate void BluePrintCreatedEventHandler(object sender, BluePrintEventArgs e);
+    public delegate void BluePrintCreatedEventHandler(object sender, ObjectEventArgs e);
+    public delegate void ObjectDeletedEventHandler(object sender, ObjectEventArgs e);
+
 
     #endregion
 
@@ -40,15 +42,23 @@ namespace Plant.Core.Impl
 
         private readonly List<object> _createdObjects = new List<object>();
 
-        #region BluePrintCreated Event
+        #region Events
 
         public event BluePrintCreatedEventHandler BluePrintCreated;
+        public event ObjectDeletedEventHandler ObjectDeleted;
 
-        protected virtual void OnBluePrintCreated(BluePrintEventArgs e)
+        protected virtual void OnBluePrintCreated(ObjectEventArgs e)
         {
             if (BluePrintCreated != null)
                 BluePrintCreated(this, e);
         }
+
+        protected virtual void OnObjectDeleted(ObjectEventArgs e)
+        {
+            if (ObjectDeleted != null)
+                ObjectDeleted(this, e);
+        }
+
 
         #endregion
 
@@ -134,7 +144,7 @@ namespace Plant.Core.Impl
         {
             T constructedObject = Build(variation, userSpecifiedProperties);
 
-            OnBluePrintCreated(new BluePrintEventArgs(constructedObject));
+            OnBluePrintCreated(new ObjectEventArgs(constructedObject));
 
             if (!_createdBluePrints.ContainsKey<T>(variation))
                 _createdBluePrints.Add(variation, constructedObject);
@@ -187,6 +197,16 @@ namespace Plant.Core.Impl
 
             if (afterCreation != null)
                 _postCreationActions.Add(variation, afterCreation);
+        }
+
+        public void ClearCreatedObjects()
+        {
+            foreach (var obj in _createdObjects)
+            {
+                OnObjectDeleted(new ObjectEventArgs(obj));
+            }
+
+            _createdObjects.Clear();
         }
 
         private void SetProperties<T>(IDictionary<PropertyData, Expression> properties, T instance)

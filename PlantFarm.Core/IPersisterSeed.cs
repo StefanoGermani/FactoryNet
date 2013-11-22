@@ -2,6 +2,7 @@
 {
     public interface IPersisterSeed
     {
-        bool Save<T>(T dto);
+        bool Save(object dto);
+        bool Delete(object dto);
     }
 }
