@@ -26,7 +26,7 @@ namespace Plant.Tests
             _persister.Expect(a => a.Save(Arg<object>.Is.Anything)).Return(true);
 
 
-            _plant.Define(() => new House {Color = "blue", SquareFoot = 50});
+            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
             _plant.Create<House>();
 
             _persister.VerifyAllExpectations();
@@ -35,7 +35,7 @@ namespace Plant.Tests
         [Test]
         public void Should_Not_Call_Persister_Save_Method_When_Building_Objects()
         {
-            _plant.Define(() => new House {Color = "blue", SquareFoot = 50});
+            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
             _plant.Build<House>();
 
             _persister.AssertWasNotCalled(p => p.Save(Arg<object>.Is.Anything));
@@ -78,6 +78,24 @@ namespace Plant.Tests
         }
 
         [Test]
+        public void Should__Call_Persister_Delete_Method_In_Reverse_Order()
+        {
+            _persister.Stub(a => a.Save(Arg<object>.Is.Anything)).Return(true);
+            _persister.Stub(a => a.Delete(Arg<object>.Is.Anything)).Return(true);
+
+            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _plant.Define(() => new Person() { FirstName = "Name" });
+            var house = _plant.Create<House>();
+            var person = _plant.Create<Person>();
+
+
+            _plant.ClearCreatedObjects();
+
+            _persister.AssertWasCalled(x => x.Delete(person), options => options.Repeat.Once());
+            _persister.AssertWasCalled(x => x.Delete(house), options => options.Repeat.Once());
+        }
+
+        [Test]
         [ExpectedException(typeof(PersisterException))]
         public void Should_Throw_PersisterException_If_Persister_Cant_Delete()
         {
@@ -105,7 +123,7 @@ namespace Plant.Tests
 
 
         [Test]
-        [ExpectedException(typeof (PersisterException))]
+        [ExpectedException(typeof(PersisterException))]
         public void Should_Throw_PersisterException_If_Persister_Is_Null()
         {
             Farm.Cultivate(null);

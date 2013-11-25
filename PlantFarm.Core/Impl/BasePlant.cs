@@ -201,9 +201,9 @@ namespace PlantFarm.Core.Impl
 
         public void ClearCreatedObjects()
         {
-            foreach (var obj in _createdObjects)
+            for (int i = _createdObjects.Count - 1; i >= 0; i--)
             {
-                OnObjectDeleted(new ObjectEventArgs(obj));
+                OnObjectDeleted(new ObjectEventArgs(_createdObjects[i]));
             }
 
             _createdObjects.Clear();
