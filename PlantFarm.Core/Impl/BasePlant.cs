@@ -149,10 +149,10 @@ namespace PlantFarm.Core.Impl
             if (!_createdBluePrints.ContainsKey<T>(variation))
                 _createdBluePrints.Add(variation, constructedObject);
 
+            _createdObjects.Add(constructedObject);
+
             if (_postCreationActions.ContainsKey<T>(variation))
                 _postCreationActions.ExecuteAction(variation, constructedObject);
-
-            _createdObjects.Add(constructedObject);
 
             return constructedObject;
         }
