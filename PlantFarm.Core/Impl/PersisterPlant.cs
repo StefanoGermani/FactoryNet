@@ -1,7 +1,7 @@
 ﻿using System;
-using Plant.Core.Exceptions;
+using PlantFarm.Core.Exceptions;
 
-namespace Plant.Core.Impl
+namespace PlantFarm.Core.Impl
 {
     internal class PersisterPlant : BasePlant
     {

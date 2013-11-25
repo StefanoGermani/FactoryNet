@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Plant.Core.Impl;
+using PlantFarm.Core.Impl;
 
-namespace Plant.Core
+namespace PlantFarm.Core
 {
-    public class PlantFarm
+    public class Farm
     {
         public static IPlant CultivateWithBlueprintsFromAssemblyOf<T>()
         {

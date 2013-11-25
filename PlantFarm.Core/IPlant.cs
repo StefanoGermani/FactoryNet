@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Plant.Core.Impl;
+using PlantFarm.Core.Impl;
 
-namespace Plant.Core
+namespace PlantFarm.Core
 {
     public interface IPlant
     {

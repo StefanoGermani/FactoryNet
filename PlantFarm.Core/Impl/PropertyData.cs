@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace Plant.Core.Impl
+namespace PlantFarm.Core.Impl
 {
     public class PropertyData
     {

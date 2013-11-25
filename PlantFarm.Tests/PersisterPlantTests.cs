@@ -1,8 +1,8 @@
 ﻿using System;
 using NUnit.Framework;
-using Plant.Core;
-using Plant.Core.Exceptions;
 using Plant.Tests.TestModels;
+using PlantFarm.Core;
+using PlantFarm.Core.Exceptions;
 using Rhino.Mocks;
 
 namespace Plant.Tests
@@ -14,7 +14,7 @@ namespace Plant.Tests
         public void SetUp()
         {
             _persister = MockRepository.GenerateMock<IPersisterSeed>();
-            _plant = PlantFarm.Cultivate(_persister);
+            _plant = Farm.Cultivate(_persister);
         }
 
         private IPersisterSeed _persister;
@@ -108,7 +108,7 @@ namespace Plant.Tests
         [ExpectedException(typeof (PersisterException))]
         public void Should_Throw_PersisterException_If_Persister_Is_Null()
         {
-            PlantFarm.Cultivate(null);
+            Farm.Cultivate(null);
         }
 
     }

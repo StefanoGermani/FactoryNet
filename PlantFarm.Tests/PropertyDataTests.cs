@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 using NUnit.Framework;
-using Plant.Core.Impl;
+using PlantFarm.Core.Impl;
 
 namespace Plant.Tests
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Plant.Core.Exceptions
+namespace PlantFarm.Core.Exceptions
 {
     public class PersisterException : Exception
     {

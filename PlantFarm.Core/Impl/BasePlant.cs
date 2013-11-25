@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Plant.Core.Exceptions;
-using Plant.Core.Impl.Dictionaries;
+using PlantFarm.Core.Exceptions;
+using PlantFarm.Core.Impl.Dictionaries;
 
-namespace Plant.Core.Impl
+namespace PlantFarm.Core.Impl
 {
 
     #region Events

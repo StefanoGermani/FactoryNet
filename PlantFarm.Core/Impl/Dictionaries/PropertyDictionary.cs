@@ -3,7 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Plant.Core.Impl.Dictionaries
+namespace PlantFarm.Core.Impl.Dictionaries
 {
     internal class PropertyDictionary : BaseDictionary
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
-using Plant.Core;
-using Plant.Core.Exceptions;
 using Plant.Tests.TestModels;
+using PlantFarm.Core;
+using PlantFarm.Core.Exceptions;
 using Rhino.Mocks;
 
 namespace Plant.Tests
@@ -14,7 +14,7 @@ namespace Plant.Tests
         [SetUp]
         public void SetUp()
         {
-            _plant = PlantFarm.Cultivate();
+            _plant = Farm.Cultivate();
         }
 
         private IPlant _plant;

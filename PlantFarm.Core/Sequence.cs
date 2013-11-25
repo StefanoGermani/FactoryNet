@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Plant.Core
+namespace PlantFarm.Core
 {
     public class Sequence
     {

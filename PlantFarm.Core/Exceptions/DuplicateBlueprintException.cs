@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
-namespace Plant.Core.Exceptions
+namespace PlantFarm.Core.Exceptions
 {
     public class DuplicateBlueprintException : Exception
     {

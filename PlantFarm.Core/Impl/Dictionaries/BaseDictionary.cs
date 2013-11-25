@@ -1,6 +1,6 @@
 using System;
 
-namespace Plant.Core.Impl.Dictionaries
+namespace PlantFarm.Core.Impl.Dictionaries
 {
     internal class BaseDictionary
     {

@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Plant.Core.Exceptions;
-using Plant.Core.Impl.Dictionaries;
+using PlantFarm.Core.Exceptions;
 
-namespace Plant.Core.Impl
+namespace PlantFarm.Core.Impl.Dictionaries
 {
     internal class ConstructorDictionary : BaseDictionary
     {

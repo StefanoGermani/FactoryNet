@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Plant.Core.Impl.Dictionaries
+namespace PlantFarm.Core.Impl.Dictionaries
 {
     internal class SequenceDictionary
     {

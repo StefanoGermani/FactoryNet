@@ -1,4 +1,4 @@
-﻿namespace Plant.Core
+﻿namespace PlantFarm.Core
 {
     public interface IPersisterSeed
     {

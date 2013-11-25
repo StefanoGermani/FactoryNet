@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
-using Plant.Core;
 using Plant.Tests.TestBlueprints;
 using Plant.Tests.TestModels;
+using PlantFarm.Core;
 using Rhino.Mocks;
 
 namespace Plant.Tests
@@ -12,7 +12,7 @@ namespace Plant.Tests
         [Test]
         public void Should_Cultivate_BasePlant()
         {
-            IPlant plant = PlantFarm.CultivateWithBlueprintsFromAssemblyOf<TestBlueprint>();
+            IPlant plant = Farm.CultivateWithBlueprintsFromAssemblyOf<TestBlueprint>();
             Assert.AreEqual("Plant.Core.Impl.BasePlant", plant.GetType().ToString());
         }
 
@@ -20,14 +20,14 @@ namespace Plant.Tests
         public void Should_Cultivate_PersisterPlant()
         {
             var persister = MockRepository.GenerateMock<IPersisterSeed>();
-            IPlant plant = PlantFarm.Cultivate(persister);
+            IPlant plant = Farm.Cultivate(persister);
             Assert.AreEqual("Plant.Core.Impl.PersisterPlant", plant.GetType().ToString());
         }
 
         [Test]
         public void Should_Load_Blueprints_From_Assembly()
         {
-            IPlant plant = PlantFarm.CultivateWithBlueprintsFromAssemblyOf<TestBlueprint>();
+            IPlant plant = Farm.CultivateWithBlueprintsFromAssemblyOf<TestBlueprint>();
             Assert.AreEqual("Plant.Core.Impl.BasePlant", plant.GetType().ToString());
             Assert.AreEqual("Elaine", plant.Create<Person>().MiddleName);
         }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Plant.Core.Impl.Dictionaries
+namespace PlantFarm.Core.Impl.Dictionaries
 {
     internal class PostCreationActionDictionary : BaseDictionary
     {

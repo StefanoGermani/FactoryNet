@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using Plant.Core;
 using Plant.Tests.TestModels;
+using PlantFarm.Core;
 
 namespace Plant.Tests
 {
@@ -14,7 +14,7 @@ namespace Plant.Tests
         [SetUp]
         public void SetUp()
         {
-            _plant = PlantFarm.Cultivate();
+            _plant = Farm.Cultivate();
         }
 
         private IPlant _plant;
