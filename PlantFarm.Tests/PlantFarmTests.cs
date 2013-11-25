@@ -13,7 +13,7 @@ namespace Plant.Tests
         public void Should_Cultivate_BasePlant()
         {
             IPlant plant = Farm.CultivateWithBlueprintsFromAssemblyOf<TestBlueprint>();
-            Assert.AreEqual("Plant.Core.Impl.BasePlant", plant.GetType().ToString());
+            Assert.AreEqual("PlantFarm.Core.Impl.BasePlant", plant.GetType().ToString());
         }
 
         [Test]
@@ -21,14 +21,14 @@ namespace Plant.Tests
         {
             var persister = MockRepository.GenerateMock<IPersisterSeed>();
             IPlant plant = Farm.Cultivate(persister);
-            Assert.AreEqual("Plant.Core.Impl.PersisterPlant", plant.GetType().ToString());
+            Assert.AreEqual("PlantFarm.Core.Impl.PersisterPlant", plant.GetType().ToString());
         }
 
         [Test]
         public void Should_Load_Blueprints_From_Assembly()
         {
             IPlant plant = Farm.CultivateWithBlueprintsFromAssemblyOf<TestBlueprint>();
-            Assert.AreEqual("Plant.Core.Impl.BasePlant", plant.GetType().ToString());
+            Assert.AreEqual("PlantFarm.Core.Impl.BasePlant", plant.GetType().ToString());
             Assert.AreEqual("Elaine", plant.Create<Person>().MiddleName);
         }
     }
