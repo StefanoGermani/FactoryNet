@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace PlantFarm.Core.Impl
 {
-    public class PropertyData
+    internal class PropertyData
     {
         private readonly Type _type;
 
