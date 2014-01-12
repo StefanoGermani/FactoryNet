@@ -8,8 +8,8 @@
     <ProjectGuid>{5E62668A-4944-4538-8CB7-98E09E018D56}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Plant.Tests</RootNamespace>
-    <AssemblyName>Plant.Tests</AssemblyName>
+    <RootNamespace>PlantFarm.Tests</RootNamespace>
+    <AssemblyName>PlantFarm.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

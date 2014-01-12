@@ -3,7 +3,7 @@ using System.Reflection;
 using NUnit.Framework;
 using PlantFarm.Core.Impl;
 
-namespace Plant.Tests
+namespace PlantFarm.Tests
 {
     [TestFixture]
     public class PropertyDataTests
