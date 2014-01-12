@@ -4,9 +4,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using PlantFarm.Core.Exceptions;
+using PlantFarm.Core.Impl;
 using PlantFarm.Core.Impl.Dictionaries;
 
-namespace PlantFarm.Core.Impl
+namespace PlantFarm.Core
 {
 
     #region Events
@@ -32,7 +33,7 @@ namespace PlantFarm.Core.Impl
 
     #endregion
 
-    internal class BasePlant : IPlant
+    public class BasePlant : IPlant
     {
         private readonly ConstructorDictionary _costructors = new ConstructorDictionary();
         private readonly PropertyDictionary _properties = new PropertyDictionary();
@@ -207,6 +208,25 @@ namespace PlantFarm.Core.Impl
             }
 
             _createdObjects.Clear();
+        }
+
+        public IPlant LoadBlueprintsFromAssembly(Assembly assembly)
+        {
+            var blueprintTypes = assembly.GetTypes().Where(t => t.IsClass && typeof(IBlueprint).IsAssignableFrom(t));
+            blueprintTypes.ToList().ForEach(blueprintType =>
+            {
+                var blueprint = (IBlueprint)Activator.CreateInstance(blueprintType);
+                blueprint.SetupPlant(this);
+            });
+
+            return this;
+        }
+
+        public IPlant LoadBlueprintsFromAssemblies()
+        {
+            AppDomain.CurrentDomain.GetAssemblies().ToList().ForEach(t => LoadBlueprintsFromAssembly(t));
+
+            return this;
         }
 
         private void SetProperties<T>(IDictionary<PropertyData, Expression> properties, T instance)

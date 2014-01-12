@@ -1,9 +1,9 @@
 ﻿using System;
 using PlantFarm.Core.Exceptions;
 
-namespace PlantFarm.Core.Impl
+namespace PlantFarm.Core
 {
-    internal class PersisterPlant : BasePlant
+    public class PersisterPlant : BasePlant
     {
         private readonly IPersisterSeed _persisterSeed;
 

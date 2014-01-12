@@ -40,16 +40,14 @@ Defining a Blueprint
 
 A Blueprint is just a class that implements the Blueprint interface.  The interface defines one method, SetupPlant, which takes a BasePlant object.  SetupPlant is a generic method which whose generic argument is the Type that you're setting up and an anonymous object with the appropriate properties.
 
-Note that currently property validation occurs during object creation, not DefinePropertiesOf.
+Note that currently property validation occurs during object creation, not Define.
 
     class PersonBlueprint : Blueprint
     {
       public void SetupPlant(BasePlant plant)
       {
-        plant.DefinePropertiesOf<Person>(new
+        plant.Define(() => new Person("Barbara", "Elaine"
                                {
-                                  FirstName = "Barbara",
-                                  MiddleName = "Elaine",
                                   LastName = "Brechtel",
                                   Address = "111 South Main St.",
                                   City = "Gulfport",
@@ -59,42 +57,6 @@ Note that currently property validation occurs during object creation, not Defin
       }
     }
   
-Use DefineConstructionOf instead of DefinePropertiesOf when an object should be created via constructor arguments.
-
-    class PersonBlueprint : Blueprint
-    {
-      public void SetupPlant(BasePlant plant)
-      {
-        plant.DefineConstructionOf<Person>(new
-                               {
-                                  FirstName = "Barbara",
-                                  MiddleName = "Elaine",
-                                  LastName = "Brechtel",
-                                  Address = "111 South Main St.",
-                                  City = "Gulfport",
-                                  State = "MS",
-                                  EmailAddress = "barbara@brechtel.com"s
-                               });
-      }
-    }
-
-Lazily evaluated properties
----------------------------
-
-To define a Blueprint with a lazily evaluated property, set the value to new LazyProperty<TPropertyType>(lambda) like so:
-
-    class PersonBlueprint : Blueprint
-    {
-      public void SetupPlant(BasePlant plant)
-      {
-        plant.DefinePropertiesOf<Person>(new
-                               {
-                                  UniqueID = new LazyProperty<int>(() => IDGenerator.GenerateNewID())
-                               });
-      }
-    }
-  
-where TPropertyType (int in this case) is the type of the property and also that returned from the lambda.
 
 Sequenced properties
 ---------------------------

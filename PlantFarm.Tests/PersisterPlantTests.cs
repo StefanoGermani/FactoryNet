@@ -14,7 +14,7 @@ namespace Plant.Tests
         public void SetUp()
         {
             _persister = MockRepository.GenerateMock<IPersisterSeed>();
-            _plant = Farm.Cultivate(_persister);
+            _plant = new PersisterPlant(_persister);
         }
 
         private IPersisterSeed _persister;
@@ -126,7 +126,7 @@ namespace Plant.Tests
         [ExpectedException(typeof(PersisterException))]
         public void Should_Throw_PersisterException_If_Persister_Is_Null()
         {
-            Farm.Cultivate(null);
+            new PersisterPlant(null);
         }
 
     }

@@ -5,12 +5,12 @@ namespace PlantFarm.Core.Impl
 {
     public class PropertyData
     {
-        private readonly Type type;
+        private readonly Type _type;
 
         public PropertyData(PropertyInfo propertyInfo)
         {
             Name = propertyInfo.Name;
-            type = propertyInfo.PropertyType;
+            _type = propertyInfo.PropertyType;
         }
 
         public string Name { get; private set; }
@@ -25,12 +25,12 @@ namespace PlantFarm.Core.Impl
         public bool Equals(PropertyData other)
         {
             if (other == null) return false;
-            return Name.Equals(other.Name) && type.Equals(other.type);
+            return Name.Equals(other.Name) && _type == other._type;
         }
 
         public override int GetHashCode()
         {
-            return type.GetHashCode() + Name.GetHashCode();
+            return _type.GetHashCode() + Name.GetHashCode();
         }
     }
 }

@@ -54,7 +54,6 @@
     <Compile Include="BasePlantCreatedObjectsTests.cs" />
     <Compile Include="IDummy.cs" />
     <Compile Include="PersisterPlantTests.cs" />
-    <Compile Include="PlantFarmTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyDataTests.cs" />
     <Compile Include="TestModels\Book.cs" />

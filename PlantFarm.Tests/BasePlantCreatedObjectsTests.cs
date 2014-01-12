@@ -13,7 +13,7 @@ namespace Plant.Tests
         [SetUp]
         public void SetUp()
         {
-            _plant = Farm.Cultivate();
+            _plant = new BasePlant();
         }
 
         private IPlant _plant;
