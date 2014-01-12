@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
 using PlantFarm.Core.Impl;
 
 namespace PlantFarm.Core
@@ -9,6 +10,9 @@ namespace PlantFarm.Core
     {
         event BluePrintCreatedEventHandler BluePrintCreated;
         event ObjectDeletedEventHandler ObjectDeleted;
+
+        IPlant LoadBlueprintsFromAssembly(Assembly assembly);
+        IPlant LoadBlueprintsFromAssemblies();
 
         IList<object> CreatedObjects { get; }
 

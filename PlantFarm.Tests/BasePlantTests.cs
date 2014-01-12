@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Linq;
+using System.Globalization;
+using System.Reflection;
 using NUnit.Framework;
 using Plant.Tests.TestModels;
 using PlantFarm.Core;
@@ -63,7 +64,7 @@ namespace Plant.Tests
         public void Should_Call_AfterCreationCallback_After_Building()
         {
             _plant.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
-                          (p) => p.FullName = p.FirstName + p.LastName);
+                          p => p.FullName = p.FirstName + p.LastName);
             var builtPerson = _plant.Build<Person>();
             Assert.AreEqual(null, builtPerson.FullName);
         }
@@ -72,7 +73,7 @@ namespace Plant.Tests
         public void Should_Call_AfterCreationCallback_After_Creation()
         {
             _plant.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
-                          (p) => p.FullName = p.FirstName + p.LastName);
+                          p => p.FullName = p.FirstName + p.LastName);
             var builtPerson = _plant.Create<Person>();
             Assert.AreEqual("AngusMacGyver", builtPerson.FullName);
         }
@@ -105,7 +106,7 @@ namespace Plant.Tests
         [Test]
         public void Should_Create_Instance_With_Not_Constant_Value()
         {
-            _plant.Define(() => new House(new Random().Next().ToString(), new Random().Next()));
+            _plant.Define(() => new House(new Random().Next().ToString(CultureInfo.InvariantCulture), new Random().Next()));
             Assert.IsNotNull(_plant.Create<House>());
         }
 
@@ -121,7 +122,7 @@ namespace Plant.Tests
         {
             _plant.Define(() => new House());
             _plant.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
-                          (p) => p.HouseWhereILive = _plant.Create<House>(x => x.Color = "Red"));
+                          p => p.HouseWhereILive = _plant.Create<House>(x => x.Color = "Red"));
             var builtPerson = _plant.Create<Person>();
 
             Assert.NotNull(builtPerson.HouseWhereILive);
@@ -231,7 +232,7 @@ namespace Plant.Tests
         {
             _plant.Define(() => new Person
                 {
-                    FirstName = Sequence.Evaluate((i) => string.Format("FirstName{0}", i))
+                    FirstName = Sequence.Evaluate(i => string.Format("FirstName{0}", i))
                 });
             Assert.AreEqual("FirstName0", _plant.Create<Person>().FirstName);
             Assert.AreEqual("FirstName1", _plant.Create<Person>(x => x.LastName = "LastName").FirstName);
@@ -242,8 +243,8 @@ namespace Plant.Tests
         {
             _plant.Define(() => new Person
             {
-                FirstName = Sequence.Evaluate((i) => "FirstName" + i),
-                LastName = Sequence.Evaluate((i) => "LastName" + i),
+                FirstName = Sequence.Evaluate(i => "FirstName" + i),
+                LastName = Sequence.Evaluate(i => "LastName" + i),
                 Age = Sequence.Evaluate(i => i)
             });
 
@@ -253,5 +254,22 @@ namespace Plant.Tests
             Assert.AreEqual("LastName0", person.LastName);
             Assert.AreEqual(0, person.Age);
         }
+
+        [Test]
+        public void Load_Blueprint_From_Assembly()
+        {
+            _plant.LoadBlueprintsFromAssembly(Assembly.GetExecutingAssembly());
+
+            Assert.DoesNotThrow(() => _plant.Create<House>());
+        }
+
+        [Test]
+        public void Load_Blueprint_From_Loaded_Assemblies()
+        {
+            _plant.LoadBlueprintsFromAssemblies();
+
+            Assert.DoesNotThrow(() => _plant.Create<House>());
+        }
+
     }
 }
