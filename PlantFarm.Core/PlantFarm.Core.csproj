@@ -43,12 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\WrongDefinitionTypeException.cs" />
-    <Compile Include="Impl\BasePlant.cs" />
+    <Compile Include="BasePlant.cs" />
     <Compile Include="Dictionaries\CreatedBlueprintsDictionary.cs" />
     <Compile Include="Dictionaries\BaseDictionary.cs" />
     <Compile Include="Dictionaries\ConstructorDictionary.cs" />
     <Compile Include="Exceptions\DuplicateBlueprintException.cs" />
-    <Compile Include="Impl\PersisterPlant.cs" />
+    <Compile Include="PersisterPlant.cs" />
     <Compile Include="Exceptions\PersisterException.cs" />
     <Compile Include="Dictionaries\PropertyDictionary.cs" />
     <Compile Include="Dictionaries\SequenceDictionary.cs" />
@@ -56,7 +56,7 @@
     <Compile Include="IPersisterSeed.cs" />
     <Compile Include="IPlant.cs" />
     <Compile Include="IBlueprint.cs" />
-    <Compile Include="Impl\PropertyData.cs" />
+    <Compile Include="PropertyData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Exceptions\PropertyNotFoundException.cs" />
     <Compile Include="Sequence.cs" />

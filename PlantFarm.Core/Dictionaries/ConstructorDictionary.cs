@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using PlantFarm.Core.Exceptions;
 
-namespace PlantFarm.Core.Impl.Dictionaries
+namespace PlantFarm.Core.Dictionaries
 {
     internal class ConstructorDictionary : BaseDictionary
     {

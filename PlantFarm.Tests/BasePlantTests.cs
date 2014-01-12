@@ -2,12 +2,13 @@
 using System.Globalization;
 using System.Reflection;
 using NUnit.Framework;
+using Plant.Tests;
 using Plant.Tests.TestModels;
 using PlantFarm.Core;
 using PlantFarm.Core.Exceptions;
 using Rhino.Mocks;
 
-namespace Plant.Tests
+namespace PlantFarm.Tests
 {
     [TestFixture]
     public class BasePlantTests

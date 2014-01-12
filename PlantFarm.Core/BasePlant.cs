@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using PlantFarm.Core.Dictionaries;
 using PlantFarm.Core.Exceptions;
 using PlantFarm.Core.Impl;
-using PlantFarm.Core.Impl.Dictionaries;
 
 namespace PlantFarm.Core
 {
-
     #region Events
 
     public class ObjectEventArgs : EventArgs
@@ -29,7 +28,6 @@ namespace PlantFarm.Core
 
     public delegate void BluePrintCreatedEventHandler(object sender, ObjectEventArgs e);
     public delegate void ObjectDeletedEventHandler(object sender, ObjectEventArgs e);
-
 
     #endregion
 

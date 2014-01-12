@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using Plant.Tests;
 using Plant.Tests.TestModels;
 using PlantFarm.Core;
 using Rhino.Mocks;
 
-namespace Plant.Tests
+namespace PlantFarm.Tests
 {
     [TestFixture]
     public class BasePlantCreatedObjectsTests

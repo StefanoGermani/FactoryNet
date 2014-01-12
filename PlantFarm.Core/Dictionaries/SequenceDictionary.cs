@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace PlantFarm.Core.Impl.Dictionaries
+namespace PlantFarm.Core.Dictionaries
 {
     internal class SequenceDictionary
     {
@@ -24,10 +24,8 @@ namespace PlantFarm.Core.Impl.Dictionaries
             }
             else
             {
-
                 _sequenceValues[typeof(T)].Add(propertyInfo, value = 0);
             }
-
 
             _sequenceValues[typeof(T)][propertyInfo]++;
 

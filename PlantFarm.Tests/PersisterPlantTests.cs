@@ -5,7 +5,7 @@ using PlantFarm.Core;
 using PlantFarm.Core.Exceptions;
 using Rhino.Mocks;
 
-namespace Plant.Tests
+namespace PlantFarm.Tests
 {
     [TestFixture]
     public class PersisterPlantTests
