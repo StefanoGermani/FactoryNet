@@ -52,7 +52,7 @@
     <Compile Include="BasePlantTests.cs" />
     <Compile Include="BasePlantVariationsTests.cs" />
     <Compile Include="BasePlantCreatedObjectsTests.cs" />
-    <Compile Include="Blueprints\TestBlueprint.cs" />
+    <Compile Include="TestBlueprints\TestBlueprint.cs" />
     <Compile Include="Helpers\BluePrintKeyHelperTests.cs" />
     <Compile Include="IDummy.cs" />
     <Compile Include="PersisterPlantTests.cs" />

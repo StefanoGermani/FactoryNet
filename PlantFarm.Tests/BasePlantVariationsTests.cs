@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using Plant.Tests.TestModels;
 using PlantFarm.Core;
+using PlantFarm.Tests.TestModels;
 
 namespace PlantFarm.Tests
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Plant.Tests.TestModels
+namespace PlantFarm.Tests.TestModels
 {
     public class Dog
     {

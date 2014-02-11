@@ -1,7 +1,7 @@
-﻿using Plant.Tests.TestModels;
-using PlantFarm.Core;
+﻿using PlantFarm.Core;
+using PlantFarm.Tests.TestModels;
 
-namespace PlantFarm.Tests.Blueprints
+namespace PlantFarm.Tests.TestBlueprints
 {
     class TestBlueprint : IBlueprint
     {

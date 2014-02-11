@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Plant.Tests.TestModels
+namespace PlantFarm.Tests.TestModels
 {
     public class House
     {

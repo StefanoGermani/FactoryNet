@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Plant.Tests;
-using Plant.Tests.TestModels;
 using PlantFarm.Core;
+using PlantFarm.Tests.TestModels;
 using Rhino.Mocks;
 
 namespace PlantFarm.Tests
