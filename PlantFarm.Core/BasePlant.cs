@@ -51,7 +51,7 @@ namespace PlantFarm.Core
 
             _constructorHelper = kernel.Get<IConstructorHelper>();
             var bluePrintKeyHelper = kernel.Get<IBluePrintKeyHelper>(); ;
-            _costructors = new ConstructorDictionary(_constructorHelper, bluePrintKeyHelper);
+            _costructors = new ConstructorDictionary(bluePrintKeyHelper);
             _properties = new PropertyDictionary(bluePrintKeyHelper);
             _sequenceValues = new SequenceDictionary();
             _postCreationActions = new PostCreationActionDictionary(bluePrintKeyHelper);
@@ -115,7 +115,7 @@ namespace PlantFarm.Core
 
         public virtual T Build<T>(string variation, Action<T> userSpecifiedProperties)
         {
-            var constructedObject = _costructors.CreateIstance<T>(variation);
+            var constructedObject = _constructorHelper.CreateInstance<T>(_costructors.Get<T>(variation));
 
             if (_properties.ContainsKey<T>(variation))
                 SetProperties(_properties.Get<T>(variation), constructedObject);

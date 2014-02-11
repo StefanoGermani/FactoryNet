@@ -9,31 +9,27 @@ namespace PlantFarm.Core.Dictionaries
 {
     internal class ConstructorDictionary 
     {
-        private readonly IConstructorHelper _constructorHelper;
         private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
-        private readonly Dictionary<string, Func<object>> _constructors = new Dictionary<string, Func<object>>();
+        private readonly Dictionary<string, NewExpression> _constructors = new Dictionary<string, NewExpression>();
 
-        public ConstructorDictionary(IConstructorHelper constructorHelper, IBluePrintKeyHelper bluePrintKeyHelper)
+        public ConstructorDictionary(IBluePrintKeyHelper bluePrintKeyHelper)
         {
-            _constructorHelper = constructorHelper;
             _bluePrintKeyHelper = bluePrintKeyHelper;
         }
 
-        public T CreateIstance<T>(string variation)
+        public NewExpression Get<T>(string variation)
         {
             if (_constructors.All(a => a.Key != _bluePrintKeyHelper.GetBluePrintKey<T>(variation)))
             {
                 throw new TypeNotSetupException(typeof(T));
             }
 
-            return (T)_constructors[_bluePrintKeyHelper.GetBluePrintKey<T>(variation)]();
+            return _constructors[_bluePrintKeyHelper.GetBluePrintKey<T>(variation)];
         }
 
         public void Add<T>(string variation, NewExpression newExpression)
         {
-            Func<object> costructor = () => _constructorHelper.CreateInstance<T>(newExpression);
-
-            _constructors.Add(_bluePrintKeyHelper.GetBluePrintKey<T>(variation), costructor);
+            _constructors.Add(_bluePrintKeyHelper.GetBluePrintKey<T>(variation), newExpression);
         }
 
         public bool ContainsType<T>(string variation)

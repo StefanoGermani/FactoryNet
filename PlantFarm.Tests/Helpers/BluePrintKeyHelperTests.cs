@@ -18,25 +18,25 @@ namespace PlantFarm.Tests.Helpers
         [Test]
         public void ShouldBuildRightKey()
         {
-            var bookKey = _bluePrintKeyHelper.GetBluePrintKey<Book>(string.Empty);
+            var key = _bluePrintKeyHelper.GetBluePrintKey<Book>(string.Empty);
 
-            Assert.AreEqual("PlantFarm.Tests.TestModels.Book-", bookKey);
+            Assert.AreEqual("PlantFarm.Tests.TestModels.Book-", key);
         }
 
         [Test]
         public void ShouldBuildRightKeyWithVariation()
         {
-            var bookKey = _bluePrintKeyHelper.GetBluePrintKey<Book>("variation");
+            var key = _bluePrintKeyHelper.GetBluePrintKey<Book>("variation");
 
-            Assert.AreEqual("PlantFarm.Tests.TestModels.Book-variation", bookKey);
+            Assert.AreEqual("PlantFarm.Tests.TestModels.Book-variation", key);
         }
 
         [Test]
         public void ShouldBuildRightKeyWithVariationAndType()
         {
-            var bookKey = _bluePrintKeyHelper.GetBluePrintKey("variation", typeof(Book));
+            var key = _bluePrintKeyHelper.GetBluePrintKey("variation", typeof(Book));
 
-            Assert.AreEqual("PlantFarm.Tests.TestModels.Book-variation", bookKey);
+            Assert.AreEqual("PlantFarm.Tests.TestModels.Book-variation", key);
         }
     }
 }
