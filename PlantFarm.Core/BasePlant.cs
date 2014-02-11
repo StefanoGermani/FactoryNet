@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Ninject;
 using PlantFarm.Core.Dictionaries;
 using PlantFarm.Core.Exceptions;
 using PlantFarm.Core.Helpers;
@@ -34,8 +35,10 @@ namespace PlantFarm.Core
 
     public class BasePlant : IPlant
     {
-        private readonly ConstructorHelper _constructorHelper;
-        private readonly BluePrintKeyHelper _bluePrintKeyHelper;
+        private readonly IKernel _kernel = new StandardKernel(new PlantFarmModule());
+
+        private readonly IConstructorHelper _constructorHelper;
+        private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
 
         private readonly ConstructorDictionary _costructors;
         private readonly PropertyDictionary _properties;
@@ -43,17 +46,19 @@ namespace PlantFarm.Core
         private readonly PostCreationActionDictionary _postCreationActions;
         private readonly CreatedBlueprintsDictionary _createdBluePrints;
 
-        private readonly List<object> _createdObjects = new List<object>();
+        private readonly List<object> _createdObjects;
 
         public BasePlant()
         {
-            _constructorHelper = new ConstructorHelper();
-            _bluePrintKeyHelper = new BluePrintKeyHelper();
+            _constructorHelper = _kernel.Get<IConstructorHelper>();
+            _bluePrintKeyHelper = _kernel.Get<IBluePrintKeyHelper>(); ;
             _costructors = new ConstructorDictionary(_constructorHelper, _bluePrintKeyHelper);
             _properties = new PropertyDictionary(_bluePrintKeyHelper);
             _sequenceValues = new SequenceDictionary();
             _postCreationActions = new PostCreationActionDictionary(_bluePrintKeyHelper);
             _createdBluePrints = new CreatedBlueprintsDictionary(_bluePrintKeyHelper);
+
+            _createdObjects = new List<object>();
         }
 
         #region Events

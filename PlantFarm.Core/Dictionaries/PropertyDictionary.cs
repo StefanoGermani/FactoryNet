@@ -9,12 +9,12 @@ namespace PlantFarm.Core.Dictionaries
 {
     internal class PropertyDictionary
     {
-        private readonly BluePrintKeyHelper _bluePrintKeyHelper;
+        private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
 
         private readonly Dictionary<string, IDictionary<PropertyData, Expression>> _properties =
             new Dictionary<string, IDictionary<PropertyData, Expression>>();
 
-        public PropertyDictionary(BluePrintKeyHelper bluePrintKeyHelper)
+        public PropertyDictionary(IBluePrintKeyHelper bluePrintKeyHelper)
         {
             _bluePrintKeyHelper = bluePrintKeyHelper;
         }

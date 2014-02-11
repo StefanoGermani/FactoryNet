@@ -9,11 +9,11 @@ namespace PlantFarm.Core.Dictionaries
 {
     internal class ConstructorDictionary 
     {
-        private readonly ConstructorHelper _constructorHelper;
-        private readonly BluePrintKeyHelper _bluePrintKeyHelper;
+        private readonly IConstructorHelper _constructorHelper;
+        private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
         private readonly Dictionary<string, Func<object>> _constructors = new Dictionary<string, Func<object>>();
 
-        public ConstructorDictionary(ConstructorHelper constructorHelper, BluePrintKeyHelper bluePrintKeyHelper)
+        public ConstructorDictionary(IConstructorHelper constructorHelper, IBluePrintKeyHelper bluePrintKeyHelper)
         {
             _constructorHelper = constructorHelper;
             _bluePrintKeyHelper = bluePrintKeyHelper;

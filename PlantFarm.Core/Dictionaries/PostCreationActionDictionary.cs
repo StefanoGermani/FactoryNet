@@ -6,11 +6,11 @@ namespace PlantFarm.Core.Dictionaries
 {
     internal class PostCreationActionDictionary
     {
-        private readonly BluePrintKeyHelper _bluePrintKeyHelper;
+        private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
 
         private readonly IDictionary<string, object> _postCreationActions = new Dictionary<string, object>();
 
-        public PostCreationActionDictionary(BluePrintKeyHelper bluePrintKeyHelper)
+        public PostCreationActionDictionary(IBluePrintKeyHelper bluePrintKeyHelper)
         {
             _bluePrintKeyHelper = bluePrintKeyHelper;
         }

@@ -5,11 +5,11 @@ namespace PlantFarm.Core.Dictionaries
 {
     internal class CreatedBlueprintsDictionary
     {
-        private readonly BluePrintKeyHelper _bluePrintKeyHelper;
+        private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
 
         private readonly Dictionary<string, object> _createdBluePrints = new Dictionary<string, object>();
 
-        public CreatedBlueprintsDictionary(BluePrintKeyHelper bluePrintKeyHelper)
+        public CreatedBlueprintsDictionary(IBluePrintKeyHelper bluePrintKeyHelper)
         {
             _bluePrintKeyHelper = bluePrintKeyHelper;
         }
