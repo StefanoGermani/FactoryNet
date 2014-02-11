@@ -139,6 +139,11 @@ namespace PlantFarm.Core
             return Create(string.Empty, userSpecifiedProperties);
         }
 
+        public T Create<T>(Expression<Func<T>> definition)
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual T Create<T>(string variation, Action<T> userSpecifiedProperties)
         {
             T constructedObject = Build(variation, userSpecifiedProperties);

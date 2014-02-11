@@ -169,7 +169,7 @@ namespace PlantFarm.Tests
             Assert.DoesNotThrow(() => _plant.Create<Dog>());
         }
 
-        [Test]
+        [Test(Description = "Can't do it on 3.5 .Net Framework")]
         public void Should_Only_Set_Properties_Once()
         {
             _plant.Define(() => new WriteOnceMemoryModule { Value = 5000 });
@@ -181,8 +181,7 @@ namespace PlantFarm.Tests
         {
             _plant.Define(() => new House { Color = "Red", SquareFoot = 3000 });
 
-            Assert.Fail();
-            //Assert.AreEqual("Blue", _plant.Create<House>(x =>  x.Color = "Blue").Color);
+            Assert.AreEqual("Blue", _plant.Create(() => new House("Blue", 5)).Color);
         }
 
         [Test]
