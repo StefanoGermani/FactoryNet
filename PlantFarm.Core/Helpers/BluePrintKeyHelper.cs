@@ -2,7 +2,13 @@
 
 namespace PlantFarm.Core.Helpers
 {
-    internal class BluePrintKeyHelper
+    internal interface IBluePrintKeyHelper
+    {
+        string GetBluePrintKey<T>(string variation);
+        string GetBluePrintKey(string variation, Type type);
+    }
+
+    internal class BluePrintKeyHelper : IBluePrintKeyHelper
     {
         public string GetBluePrintKey<T>(string variation)
         {

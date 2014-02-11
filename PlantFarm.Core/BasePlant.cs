@@ -181,7 +181,7 @@ namespace PlantFarm.Core
                     throw new WrongDefinitionTypeException();
             }
 
-            return (T)_constructorHelper.CreateInstance<T>(newExpression);
+            return _constructorHelper.CreateInstance<T>(newExpression);
         }
 
         public virtual T Create<T>(string variation, Action<T> userSpecifiedProperties)

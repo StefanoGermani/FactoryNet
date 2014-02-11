@@ -17,9 +17,8 @@ namespace PlantFarm.Core.Impl
 
         public override bool Equals(object other)
         {
-            if (other is PropertyData)
-                return Equals((PropertyData) other);
-            return false;
+            var propertyData = other as PropertyData;
+            return propertyData != null && Equals(propertyData);
         }
 
         public bool Equals(PropertyData other)
