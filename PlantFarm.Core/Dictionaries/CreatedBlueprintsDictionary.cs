@@ -1,24 +1,32 @@
 ﻿using System.Collections.Generic;
+using PlantFarm.Core.Helpers;
 
 namespace PlantFarm.Core.Dictionaries
 {
-    internal class CreatedBlueprintsDictionary : BaseDictionary
+    internal class CreatedBlueprintsDictionary
     {
+        private readonly BluePrintKeyHelper _bluePrintKeyHelper;
+
         private readonly Dictionary<string, object> _createdBluePrints = new Dictionary<string, object>();
+
+        public CreatedBlueprintsDictionary(BluePrintKeyHelper bluePrintKeyHelper)
+        {
+            _bluePrintKeyHelper = bluePrintKeyHelper;
+        }
 
         public void Add<T>(string variation, T createdObject)
         {
-            _createdBluePrints.Add(BluePrintKey<T>(variation), createdObject);
+            _createdBluePrints.Add(_bluePrintKeyHelper.GetBluePrintKey<T>(variation), createdObject);
         }
 
         public bool ContainsKey<T>(string variation)
         {
-            return _createdBluePrints.ContainsKey(BluePrintKey<T>(variation));
+            return _createdBluePrints.ContainsKey(_bluePrintKeyHelper.GetBluePrintKey<T>(variation));
         }
 
         public T Get<T>(string varation)
         {
-            return (T)_createdBluePrints[BluePrintKey<T>(varation)];
+            return (T)_createdBluePrints[_bluePrintKeyHelper.GetBluePrintKey<T>(varation)];
         }
     }
 }

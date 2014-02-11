@@ -185,6 +185,14 @@ namespace PlantFarm.Tests
         }
 
         [Test]
+        public void Should_Override_Default_Properties()
+        {
+            _plant.Define(() => new House { Color = "Red", SquareFoot = 3000 });
+
+            Assert.AreEqual("Blue", _plant.Create(() => new House() { Color = "Blue" }).Color);
+        }
+
+        [Test]
         public void Should_Prefill_Relation()
         {
             _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });

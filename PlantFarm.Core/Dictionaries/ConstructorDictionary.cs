@@ -3,46 +3,47 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using PlantFarm.Core.Exceptions;
+using PlantFarm.Core.Helpers;
 
 namespace PlantFarm.Core.Dictionaries
 {
-    internal class ConstructorDictionary : BaseDictionary
+    internal class ConstructorDictionary 
     {
+        private readonly ConstructorHelper _constructorHelper;
+        private readonly BluePrintKeyHelper _bluePrintKeyHelper;
         private readonly Dictionary<string, Func<object>> _constructors = new Dictionary<string, Func<object>>();
+
+        public ConstructorDictionary(ConstructorHelper constructorHelper, BluePrintKeyHelper bluePrintKeyHelper)
+        {
+            _constructorHelper = constructorHelper;
+            _bluePrintKeyHelper = bluePrintKeyHelper;
+        }
 
         public T CreateIstance<T>(string variation)
         {
-            if (_constructors.All(a => a.Key != BluePrintKey<T>(variation)))
+            if (_constructors.All(a => a.Key != _bluePrintKeyHelper.GetBluePrintKey<T>(variation)))
             {
                 throw new TypeNotSetupException(typeof(T));
             }
 
-            return (T)_constructors[BluePrintKey<T>(variation)]();
+            return (T)_constructors[_bluePrintKeyHelper.GetBluePrintKey<T>(variation)]();
         }
 
         public void Add<T>(string variation, NewExpression newExpression)
         {
-            Func<object> costructor = () => newExpression.Constructor.Invoke(newExpression.Arguments.Select(a => ExecuteExpression(a)).ToArray());
+            Func<object> costructor = () => _constructorHelper.CreateInstance<T>(newExpression);
 
-            _constructors.Add(BluePrintKey<T>(variation), costructor);
-        }
-
-        private object ExecuteExpression(Expression expression)
-        {
-            LambdaExpression lambda = Expression.Lambda(expression);
-            Delegate compiled = lambda.Compile();
-
-            return compiled.DynamicInvoke(null);
+            _constructors.Add(_bluePrintKeyHelper.GetBluePrintKey<T>(variation), costructor);
         }
 
         public bool ContainsType<T>(string variation)
         {
-            return _constructors.ContainsKey(BluePrintKey<T>(variation));
+            return _constructors.ContainsKey(_bluePrintKeyHelper.GetBluePrintKey<T>(variation));
         }
 
         public bool ContainsType(string variation, Type type)
         {
-            return _constructors.ContainsKey(BluePrintKey(variation, type));
+            return _constructors.ContainsKey(_bluePrintKeyHelper.GetBluePrintKey(variation, type));
         }
     }
 }

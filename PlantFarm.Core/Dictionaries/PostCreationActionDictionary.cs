@@ -1,25 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using PlantFarm.Core.Helpers;
 
 namespace PlantFarm.Core.Dictionaries
 {
-    internal class PostCreationActionDictionary : BaseDictionary
+    internal class PostCreationActionDictionary
     {
+        private readonly BluePrintKeyHelper _bluePrintKeyHelper;
+
         private readonly IDictionary<string, object> _postCreationActions = new Dictionary<string, object>();
+
+        public PostCreationActionDictionary(BluePrintKeyHelper bluePrintKeyHelper)
+        {
+            _bluePrintKeyHelper = bluePrintKeyHelper;
+        }
 
         public void Add<T>(string variation, Action<T> afterCreation)
         {
-            _postCreationActions.Add(BluePrintKey<T>(variation), afterCreation);
+            _postCreationActions.Add(_bluePrintKeyHelper.GetBluePrintKey<T>(variation), afterCreation);
         }
 
         public bool ContainsKey<T>(string variation)
         {
-            return _postCreationActions.ContainsKey(BluePrintKey<T>(variation));
+            return _postCreationActions.ContainsKey(_bluePrintKeyHelper.GetBluePrintKey<T>(variation));
         }
 
         public void ExecuteAction<T>(string variation, T constructedObject)
         {
-            ((Action<T>)_postCreationActions[BluePrintKey<T>(variation)])(constructedObject);
+            ((Action<T>)_postCreationActions[_bluePrintKeyHelper.GetBluePrintKey<T>(variation)])(constructedObject);
         }
     }
 }

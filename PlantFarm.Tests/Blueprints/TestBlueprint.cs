@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Plant.Tests.TestModels;
+﻿using Plant.Tests.TestModels;
 using PlantFarm.Core;
 
-namespace Plant.Tests.Blueprints
+namespace PlantFarm.Tests.Blueprints
 {
     class TestBlueprint : IBlueprint
     {

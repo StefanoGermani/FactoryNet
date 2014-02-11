@@ -2,23 +2,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using PlantFarm.Core.Helpers;
 using PlantFarm.Core.Impl;
 
 namespace PlantFarm.Core.Dictionaries
 {
-    internal class PropertyDictionary : BaseDictionary
+    internal class PropertyDictionary
     {
+        private readonly BluePrintKeyHelper _bluePrintKeyHelper;
+
         private readonly Dictionary<string, IDictionary<PropertyData, Expression>> _properties =
             new Dictionary<string, IDictionary<PropertyData, Expression>>();
 
+        public PropertyDictionary(BluePrintKeyHelper bluePrintKeyHelper)
+        {
+            _bluePrintKeyHelper = bluePrintKeyHelper;
+        }
+
         public void Add<T>(string variation, IEnumerable<MemberBinding> defaults)
         {
-            _properties.Add(BluePrintKey<T>(variation), ToPropertyList(defaults));
+            _properties.Add(_bluePrintKeyHelper.GetBluePrintKey<T>(variation), ToPropertyList(defaults));
         }
 
         public IDictionary<PropertyData, Expression> Get<T>(string variation)
         {
-            return _properties[BluePrintKey<T>(variation)];
+            return _properties[_bluePrintKeyHelper.GetBluePrintKey<T>(variation)];
         }
 
         private IDictionary<PropertyData, Expression> ToPropertyList(IEnumerable<MemberBinding> defaults)
@@ -31,7 +39,7 @@ namespace PlantFarm.Core.Dictionaries
 
         public bool ContainsKey<T>(string variant)
         {
-            return _properties.ContainsKey(BluePrintKey<T>(variant));
+            return _properties.ContainsKey(_bluePrintKeyHelper.GetBluePrintKey<T>(variant));
         }
     }
 }

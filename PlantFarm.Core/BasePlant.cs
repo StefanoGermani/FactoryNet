@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using PlantFarm.Core.Dictionaries;
 using PlantFarm.Core.Exceptions;
+using PlantFarm.Core.Helpers;
 using PlantFarm.Core.Impl;
 
 namespace PlantFarm.Core
@@ -33,13 +34,27 @@ namespace PlantFarm.Core
 
     public class BasePlant : IPlant
     {
-        private readonly ConstructorDictionary _costructors = new ConstructorDictionary();
-        private readonly PropertyDictionary _properties = new PropertyDictionary();
-        private readonly SequenceDictionary _sequenceValues = new SequenceDictionary();
-        private readonly PostCreationActionDictionary _postCreationActions = new PostCreationActionDictionary();
-        private readonly CreatedBlueprintsDictionary _createdBluePrints = new CreatedBlueprintsDictionary();
+        private readonly ConstructorHelper _constructorHelper;
+        private readonly BluePrintKeyHelper _bluePrintKeyHelper;
+
+        private readonly ConstructorDictionary _costructors;
+        private readonly PropertyDictionary _properties;
+        private readonly SequenceDictionary _sequenceValues;
+        private readonly PostCreationActionDictionary _postCreationActions;
+        private readonly CreatedBlueprintsDictionary _createdBluePrints;
 
         private readonly List<object> _createdObjects = new List<object>();
+
+        public BasePlant()
+        {
+            _constructorHelper = new ConstructorHelper();
+            _bluePrintKeyHelper = new BluePrintKeyHelper();
+            _costructors = new ConstructorDictionary(_constructorHelper, _bluePrintKeyHelper);
+            _properties = new PropertyDictionary(_bluePrintKeyHelper);
+            _sequenceValues = new SequenceDictionary();
+            _postCreationActions = new PostCreationActionDictionary(_bluePrintKeyHelper);
+            _createdBluePrints = new CreatedBlueprintsDictionary(_bluePrintKeyHelper);
+        }
 
         #region Events
 
@@ -66,10 +81,14 @@ namespace PlantFarm.Core
             T constructedObject;
 
             if (_createdBluePrints.ContainsKey<T>(string.Empty))
+            {
                 constructedObject = _createdBluePrints.Get<T>(string.Empty);
+            }
             else
+            {
                 constructedObject = Create<T>();
-
+            }
+                
             return constructedObject;
         }
 
@@ -141,7 +160,28 @@ namespace PlantFarm.Core
 
         public T Create<T>(Expression<Func<T>> definition)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            NewExpression newExpression;
+
+            switch (definition.Body.NodeType)
+            {
+                case ExpressionType.MemberInit:
+                    {
+                        //var memberInitExpression = ((MemberInitExpression)definition.Body);
+                        newExpression = ((MemberInitExpression) definition.Body).NewExpression;
+                        //_properties.Add<T>(variation, memberInitExpression.Bindings);
+                    }
+                    break;
+                case ExpressionType.New:
+                    {
+                        newExpression = (NewExpression)definition.Body;
+                    }
+                    break;
+                default:
+                    throw new WrongDefinitionTypeException();
+            }
+
+            return (T)_constructorHelper.CreateInstance<T>(newExpression);
         }
 
         public virtual T Create<T>(string variation, Action<T> userSpecifiedProperties)

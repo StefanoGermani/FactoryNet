@@ -42,12 +42,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\BluePrintKeyHelper.cs" />
     <Compile Include="Exceptions\WrongDefinitionTypeException.cs" />
     <Compile Include="BasePlant.cs" />
     <Compile Include="Dictionaries\CreatedBlueprintsDictionary.cs" />
-    <Compile Include="Dictionaries\BaseDictionary.cs" />
     <Compile Include="Dictionaries\ConstructorDictionary.cs" />
     <Compile Include="Exceptions\DuplicateBlueprintException.cs" />
+    <Compile Include="Helpers\ConstructorHelper.cs" />
     <Compile Include="PersisterPlant.cs" />
     <Compile Include="Exceptions\PersisterException.cs" />
     <Compile Include="Dictionaries\PropertyDictionary.cs" />
