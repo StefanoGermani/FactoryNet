@@ -7,7 +7,7 @@ namespace PlantFarm.Tests.Helpers
     [TestFixture]
     public class BluePrintKeyHelperTests
     {
-        private BluePrintKeyHelper _bluePrintKeyHelper;
+        private IBluePrintKeyHelper _bluePrintKeyHelper;
 
         [SetUp]
         public void Setup()

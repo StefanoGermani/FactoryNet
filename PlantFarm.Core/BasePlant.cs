@@ -35,10 +35,7 @@ namespace PlantFarm.Core
 
     public class BasePlant : IPlant
     {
-        private readonly IKernel _kernel = new StandardKernel(new PlantFarmModule());
-
         private readonly IConstructorHelper _constructorHelper;
-        private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
 
         private readonly ConstructorDictionary _costructors;
         private readonly PropertyDictionary _properties;
@@ -50,13 +47,15 @@ namespace PlantFarm.Core
 
         public BasePlant()
         {
-            _constructorHelper = _kernel.Get<IConstructorHelper>();
-            _bluePrintKeyHelper = _kernel.Get<IBluePrintKeyHelper>(); ;
-            _costructors = new ConstructorDictionary(_constructorHelper, _bluePrintKeyHelper);
-            _properties = new PropertyDictionary(_bluePrintKeyHelper);
+            var kernel = new StandardKernel(new PlantFarmModule());
+
+            _constructorHelper = kernel.Get<IConstructorHelper>();
+            var bluePrintKeyHelper = kernel.Get<IBluePrintKeyHelper>(); ;
+            _costructors = new ConstructorDictionary(_constructorHelper, bluePrintKeyHelper);
+            _properties = new PropertyDictionary(bluePrintKeyHelper);
             _sequenceValues = new SequenceDictionary();
-            _postCreationActions = new PostCreationActionDictionary(_bluePrintKeyHelper);
-            _createdBluePrints = new CreatedBlueprintsDictionary(_bluePrintKeyHelper);
+            _postCreationActions = new PostCreationActionDictionary(bluePrintKeyHelper);
+            _createdBluePrints = new CreatedBlueprintsDictionary(bluePrintKeyHelper);
 
             _createdObjects = new List<object>();
         }
