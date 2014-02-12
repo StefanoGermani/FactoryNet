@@ -32,7 +32,7 @@ Targetted features can be found in the issues list for the project.  Some specif
 Terms
 -----
 
-A 'Plant' is the thing that creates your objects for you.  
+A 'Factory' is the thing that creates your objects for you.  
 A 'Blueprint' is what a user provides to tell a plant how to create an object.
 
 Defining a Blueprint
@@ -79,7 +79,7 @@ To define a Blueprint property that is evaluated lazily, but with a sequence cou
 Usage
 -----
 
-To create a new Plant, you'll typically want to tell it which Assembly to look in for Blueprints.  You can do this via
+To create a new Factory, you'll typically want to tell it which Assembly to look in for Blueprints.  You can do this via
 
     var factory = new BaseFactory().WithBlueprintsFromAssemblyOf<PersonBlueprint>();
   
