@@ -1,13 +1,12 @@
 FactoryNet
 =====
 
-FactoryNet is a test factory for .NET 3.5.  It is very much like FactoryGirl (http://github.com/thoughtbot/factory_girl/) for Ruby.  The goal of this project is to allow you to reduce noise and duplication across your tests when creating models.  
+FactoryNet is a test factory for .NET 3.5. It is very much like FactoryGirl (http://github.com/thoughtbot/factory_girl/) for Ruby. The goal of this project is to allow you to reduce noise and duplication across your tests when creating models.  
 
 Download
 --------
 
 * Github: http://github.com/stefanogermani/factorynet
-* NuGet:  https://nuget.org/packages/Plant (Thanks Chris Micacchi!)
 
 
 Features
