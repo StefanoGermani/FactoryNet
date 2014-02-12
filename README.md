@@ -67,10 +67,10 @@ To define a Blueprint property that is evaluated lazily, but with a sequence cou
       public void SetupPlant(BasePlant plant)
       {
         plant.Define(() => new Person
-                               {
-                                  ID = Sequence.Evaluate((sequenceValue) => sequenceValue),
-                                  Name = Sequence.Evaluate((sequenceValue) => string.Format("Name {0}", sequenceValue))
-                               });
+                           {
+                              ID = Sequence.Evaluate((i) => i),
+                              Name = Sequence.Evaluate((i) => string.Format("Name {0}", i))
+                           });
       }
     }
   
@@ -80,7 +80,7 @@ Usage
 
 To create a new Factory, you'll typically want to tell it which Assembly to look in for Blueprints.  You can do this via
 
-    var factory = new BaseFactory().WithBlueprintsFromAssemblyOf<PersonBlueprint>();
+    var factory = new BaseFactory().LoadBlueprintsFromCurrentAssembly();
   
 where PersonBlueprint is one of the Blueprints you have defined.  Plant will then load blueprints from any other type that implements the Blueprint interface in that assembly.
 
