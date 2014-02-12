@@ -4,7 +4,12 @@ using System.Reflection;
 
 namespace PlantFarm.Core.Dictionaries
 {
-    internal class SequenceDictionary
+    internal interface ISequenceDictionary
+    {
+        int GetSequenceValue<T>(PropertyInfo propertyInfo);
+    }
+
+    internal class SequenceDictionary : ISequenceDictionary
     {
         private readonly Dictionary<Type, Dictionary<PropertyInfo, int>> _sequenceValues =
             new Dictionary<Type, Dictionary<PropertyInfo, int>>();

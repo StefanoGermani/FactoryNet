@@ -37,11 +37,11 @@ namespace PlantFarm.Core
     {
         private readonly IConstructorHelper _constructorHelper;
 
-        private readonly ConstructorDictionary _costructors;
-        private readonly PropertyDictionary _properties;
-        private readonly SequenceDictionary _sequenceValues;
-        private readonly PostCreationActionDictionary _postCreationActions;
-        private readonly CreatedBlueprintsDictionary _createdBluePrints;
+        private readonly IConstructorDictionary _costructors;
+        private readonly IPropertyDictionary _properties;
+        private readonly ISequenceDictionary _sequenceValues;
+        private readonly IPostCreationActionDictionary _postCreationActions;
+        private readonly ICreatedBlueprintsDictionary _createdBluePrints;
 
         private readonly List<object> _createdObjects;
 
@@ -50,12 +50,11 @@ namespace PlantFarm.Core
             var kernel = new StandardKernel(new PlantFarmModule());
 
             _constructorHelper = kernel.Get<IConstructorHelper>();
-            var bluePrintKeyHelper = kernel.Get<IBluePrintKeyHelper>(); ;
-            _costructors = new ConstructorDictionary(bluePrintKeyHelper);
-            _properties = new PropertyDictionary(bluePrintKeyHelper);
-            _sequenceValues = new SequenceDictionary();
-            _postCreationActions = new PostCreationActionDictionary(bluePrintKeyHelper);
-            _createdBluePrints = new CreatedBlueprintsDictionary(bluePrintKeyHelper);
+            _costructors = kernel.Get<IConstructorDictionary>();
+            _properties = kernel.Get<IPropertyDictionary>();
+            _sequenceValues = kernel.Get<ISequenceDictionary>();
+            _postCreationActions = kernel.Get<IPostCreationActionDictionary>();
+            _createdBluePrints = kernel.Get<ICreatedBlueprintsDictionary>();
 
             _createdObjects = new List<object>();
         }

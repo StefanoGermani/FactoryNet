@@ -3,7 +3,14 @@ using PlantFarm.Core.Helpers;
 
 namespace PlantFarm.Core.Dictionaries
 {
-    internal class CreatedBlueprintsDictionary
+    internal interface ICreatedBlueprintsDictionary
+    {
+        void Add<T>(string variation, T createdObject);
+        bool ContainsKey<T>(string variation);
+        T Get<T>(string varation);
+    }
+
+    internal class CreatedBlueprintsDictionary : ICreatedBlueprintsDictionary
     {
         private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
 

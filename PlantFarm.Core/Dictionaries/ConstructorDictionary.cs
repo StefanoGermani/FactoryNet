@@ -7,7 +7,15 @@ using PlantFarm.Core.Helpers;
 
 namespace PlantFarm.Core.Dictionaries
 {
-    internal class ConstructorDictionary 
+    internal interface IConstructorDictionary
+    {
+        NewExpression Get<T>(string variation);
+        void Add<T>(string variation, NewExpression newExpression);
+        bool ContainsType<T>(string variation);
+        bool ContainsType(string variation, Type type);
+    }
+
+    internal class ConstructorDictionary : Dictionary<string, NewExpression>
     {
         private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
         private readonly Dictionary<string, NewExpression> _constructors = new Dictionary<string, NewExpression>();

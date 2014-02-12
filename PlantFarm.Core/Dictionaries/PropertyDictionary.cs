@@ -7,7 +7,14 @@ using PlantFarm.Core.Impl;
 
 namespace PlantFarm.Core.Dictionaries
 {
-    internal class PropertyDictionary
+    internal interface IPropertyDictionary
+    {
+        void Add<T>(string variation, IEnumerable<MemberBinding> defaults);
+        IDictionary<PropertyData, Expression> Get<T>(string variation);
+        bool ContainsKey<T>(string variant);
+    }
+
+    internal class PropertyDictionary : IPropertyDictionary
     {
         private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
 

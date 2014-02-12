@@ -4,7 +4,14 @@ using PlantFarm.Core.Helpers;
 
 namespace PlantFarm.Core.Dictionaries
 {
-    internal class PostCreationActionDictionary
+    internal interface IPostCreationActionDictionary
+    {
+        void Add<T>(string variation, Action<T> afterCreation);
+        bool ContainsKey<T>(string variation);
+        void ExecuteAction<T>(string variation, T constructedObject);
+    }
+
+    internal class PostCreationActionDictionary : IPostCreationActionDictionary
     {
         private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
 
