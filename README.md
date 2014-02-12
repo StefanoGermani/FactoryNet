@@ -1,7 +1,7 @@
-Plant
+PlantFarm
 =====
 
-Plant is a test factory for .NET 3.5.  It is very much like FactoryGirl (http://github.com/thoughtbot/factory_girl/) for Ruby.  The goal of this project is to allow you to reduce noise and duplication across your tests when creating models.  
+PlantFarm is a test factory for .NET 3.5.  It is very much like FactoryGirl (http://github.com/thoughtbot/factory_girl/) for Ruby.  The goal of this project is to allow you to reduce noise and duplication across your tests when creating models.  
 
 Download
 --------
@@ -13,7 +13,7 @@ Download
 Features
 --------
 
-Currently Plant supports
+Currently PlantFarm supports
 
 * Object creation via properties
 * Object creation by constructor arguments
@@ -46,7 +46,7 @@ Note that currently property validation occurs during object creation, not Defin
     {
       public void SetupPlant(BasePlant plant)
       {
-        plant.Define(() => new Person("Barbara", "Elaine"
+        plant.Define(() => new Person("Barbara")
                                {
                                   LastName = "Brechtel",
                                   Address = "111 South Main St.",
@@ -61,7 +61,7 @@ Note that currently property validation occurs during object creation, not Defin
 Sequenced properties
 ---------------------------
 
-To define a Blueprint property that is evaluated lazily, but with a sequence counter, set the value to new Sequence<TPropertyType>(lambda) like so:
+To define a Blueprint property that is evaluated lazily, but with a sequence counter, set the value to Sequence.Evaluate(lambda) like so:
 
     class PersonBlueprint : Blueprint
     {
@@ -69,13 +69,12 @@ To define a Blueprint property that is evaluated lazily, but with a sequence cou
       {
         plant.DefinePropertiesOf<Person>(new
                                {
-                                  ID = new Sequence<int>((sequenceValue) => sequenceValue)
-                                  Name = new Sequence<int>((sequenceValue) => "test: " + sequenceValue)
+                                  ID = Sequence.Evaluate((sequenceValue) => sequenceValue),
+                                  Name = Sequence.Evaluate((sequenceValue) => string.Format("Name {0}", sequenceValue))
                                });
       }
     }
   
-where TPropertyType (int in this case) is the type of the property and also that returned from the lambda.
   
 Usage
 -----
@@ -92,8 +91,8 @@ To retrieve the default instance of an object
   
 To retrieve an instance of a person with specific parts of the default blueprint overridden
 
-    var person = plant.Create<Person>(new { EmailAddress = "john@doe.com" });
+    var person = plant.Create<Person>(p => p.EmailAddress = "john@doe.com" );
   
 Multiple properties can be overridden in one call
 
-    var person = plant.Create<Person>(new { EmailAddress = "john@doe.com", State = "GA" });
+    var person = plant.Create<Person>(p => { p.EmailAddress = "john@doe.com"; p.State = "GA"; });
