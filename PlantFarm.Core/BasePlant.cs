@@ -161,31 +161,31 @@ namespace PlantFarm.Core
             return Create(string.Empty, userSpecifiedProperties);
         }
 
-        public T Create<T>(Expression<Func<T>> definition)
-        {
-            //throw new NotImplementedException();
-            NewExpression newExpression;
+        //public T Create<T>(Expression<Func<T>> definition)
+        //{
+        //    //throw new NotImplementedException();
+        //    NewExpression newExpression;
 
-            switch (definition.Body.NodeType)
-            {
-                case ExpressionType.MemberInit:
-                    {
-                        //var memberInitExpression = ((MemberInitExpression)definition.Body);
-                        newExpression = ((MemberInitExpression) definition.Body).NewExpression;
-                        //_properties.Add<T>(variation, memberInitExpression.Bindings);
-                    }
-                    break;
-                case ExpressionType.New:
-                    {
-                        newExpression = (NewExpression)definition.Body;
-                    }
-                    break;
-                default:
-                    throw new WrongDefinitionTypeException();
-            }
+        //    switch (definition.Body.NodeType)
+        //    {
+        //        case ExpressionType.MemberInit:
+        //            {
+        //                //var memberInitExpression = ((MemberInitExpression)definition.Body);
+        //                newExpression = ((MemberInitExpression) definition.Body).NewExpression;
+        //                //_properties.Add<T>(variation, memberInitExpression.Bindings);
+        //            }
+        //            break;
+        //        case ExpressionType.New:
+        //            {
+        //                newExpression = (NewExpression)definition.Body;
+        //            }
+        //            break;
+        //        default:
+        //            throw new WrongDefinitionTypeException();
+        //    }
 
-            return _constructorHelper.CreateInstance<T>(newExpression);
-        }
+        //    return _constructorHelper.CreateInstance<T>(newExpression);
+        //}
 
         public virtual T Create<T>(string variation, Action<T> userSpecifiedProperties)
         {

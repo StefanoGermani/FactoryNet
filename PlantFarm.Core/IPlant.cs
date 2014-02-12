@@ -23,7 +23,7 @@ namespace PlantFarm.Core
         T Create<T>();
         T Create<T>(string variation);
         T Create<T>(Action<T> userSpecifiedProperties);
-        T Create<T>(Expression<Func<T>> definition);
+        //T Create<T>(Expression<Func<T>> definition);
         T Create<T>(string variation, Action<T> userSpecifiedProperties);
 
         void Define<T>(Expression<Func<T>> definition);

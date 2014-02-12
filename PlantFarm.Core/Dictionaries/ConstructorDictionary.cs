@@ -15,7 +15,7 @@ namespace PlantFarm.Core.Dictionaries
         bool ContainsType(string variation, Type type);
     }
 
-    internal class ConstructorDictionary : Dictionary<string, NewExpression>
+    internal class ConstructorDictionary : IConstructorDictionary
     {
         private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
         private readonly Dictionary<string, NewExpression> _constructors = new Dictionary<string, NewExpression>();
