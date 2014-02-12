@@ -12,6 +12,8 @@ namespace FactoryNet.Core
 
         IPlant LoadBlueprintsFromAssembly(Assembly assembly);
         IPlant LoadBlueprintsFromAssemblies();
+        IPlant LoadBlueprintsFromCurrentAssembly();
+
 
         IList<object> CreatedObjects { get; }
 

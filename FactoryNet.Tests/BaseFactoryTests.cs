@@ -263,7 +263,7 @@ namespace FactoryNet.Tests
         }
 
         [Test]
-        public void Load_Blueprint_From_Assembly()
+        public void Should_Load_Blueprint_From_Assembly()
         {
             _plant.LoadBlueprintsFromAssembly(Assembly.GetExecutingAssembly());
 
@@ -271,7 +271,15 @@ namespace FactoryNet.Tests
         }
 
         [Test]
-        public void Load_Blueprint_From_Loaded_Assemblies()
+        public void Should_Load_Blueprint_From_Current_Assembly()
+        {
+            _plant.LoadBlueprintsFromCurrentAssembly();
+
+            Assert.DoesNotThrow(() => _plant.Create<House>());
+        }
+
+        [Test]
+        public void Should_Load_Blueprint_From_Loaded_Assemblies()
         {
             _plant.LoadBlueprintsFromAssemblies();
 

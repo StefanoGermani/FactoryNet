@@ -255,6 +255,18 @@ namespace FactoryNet.Core
             _createdObjects.Clear();
         }
 
+        public IPlant LoadBlueprintsFromCurrentAssembly()
+        {
+            var blueprintTypes = Assembly.GetCallingAssembly().GetTypes().Where(t => t.IsClass && typeof(IBlueprint).IsAssignableFrom(t));
+            blueprintTypes.ToList().ForEach(blueprintType =>
+            {
+                var blueprint = (IBlueprint)Activator.CreateInstance(blueprintType);
+                blueprint.SetupPlant(this);
+            });
+
+            return this;
+        }
+
         public IPlant LoadBlueprintsFromAssembly(Assembly assembly)
         {
             var blueprintTypes = assembly.GetTypes().Where(t => t.IsClass && typeof(IBlueprint).IsAssignableFrom(t));
