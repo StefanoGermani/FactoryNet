@@ -3,11 +3,11 @@ using FactoryNet.Core.Exceptions;
 
 namespace FactoryNet.Core
 {
-    public class PersisterPlant : BasePlant
+    public class PersisterFactory : BaseFactory
     {
         private readonly IPersisterSeed _persisterSeed;
 
-        public PersisterPlant(IPersisterSeed persisterSeed)
+        public PersisterFactory(IPersisterSeed persisterSeed)
         {
             if (persisterSeed == null)
             {

@@ -4,7 +4,7 @@ using Ninject.Modules;
 
 namespace FactoryNet.Core
 {
-    internal class PlantFarmModule : NinjectModule
+    internal class FactoryNetModule : NinjectModule
     {
         public override void Load()
         {

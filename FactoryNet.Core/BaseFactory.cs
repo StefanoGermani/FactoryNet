@@ -32,7 +32,7 @@ namespace FactoryNet.Core
 
     #endregion
 
-    public class BasePlant : IPlant
+    public class BaseFactory : IPlant
     {
         private readonly IConstructorHelper _constructorHelper;
 
@@ -44,9 +44,9 @@ namespace FactoryNet.Core
 
         private readonly List<object> _createdObjects;
 
-        public BasePlant()
+        public BaseFactory()
         {
-            var kernel = new StandardKernel(new PlantFarmModule());
+            var kernel = new StandardKernel(new FactoryNetModule());
 
             _constructorHelper = kernel.Get<IConstructorHelper>();
             _costructors = kernel.Get<IConstructorDictionary>();

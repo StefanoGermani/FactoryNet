@@ -8,13 +8,13 @@ using Rhino.Mocks;
 namespace FactoryNet.Tests
 {
     [TestFixture]
-    public class PersisterPlantTests
+    public class PersisterFactoryTests
     {
         [SetUp]
         public void SetUp()
         {
             _persister = MockRepository.GenerateMock<IPersisterSeed>();
-            _plant = new PersisterPlant(_persister);
+            _plant = new PersisterFactory(_persister);
         }
 
         private IPersisterSeed _persister;
@@ -126,7 +126,7 @@ namespace FactoryNet.Tests
         [ExpectedException(typeof(PersisterException))]
         public void Should_Throw_PersisterException_If_Persister_Is_Null()
         {
-            new PersisterPlant(null);
+            new PersisterFactory(null);
         }
 
     }

@@ -6,12 +6,12 @@ using Rhino.Mocks;
 namespace FactoryNet.Tests
 {
     [TestFixture]
-    public class BasePlantCreatedObjectsTests
+    public class BaseFactoryCreatedObjectsTests
     {
         [SetUp]
         public void SetUp()
         {
-            _plant = new BasePlant();
+            _plant = new BaseFactory();
         }
 
         private IPlant _plant;

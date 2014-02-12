@@ -1,19 +1,19 @@
-PlantFarm
+FactoryNet
 =====
 
-PlantFarm is a test factory for .NET 3.5.  It is very much like FactoryGirl (http://github.com/thoughtbot/factory_girl/) for Ruby.  The goal of this project is to allow you to reduce noise and duplication across your tests when creating models.  
+FactoryNet is a test factory for .NET 3.5.  It is very much like FactoryGirl (http://github.com/thoughtbot/factory_girl/) for Ruby.  The goal of this project is to allow you to reduce noise and duplication across your tests when creating models.  
 
 Download
 --------
 
-* Github: http://github.com/jbrechtel/plant
+* Github: http://github.com/stefanogermani/factorynet
 * NuGet:  https://nuget.org/packages/Plant (Thanks Chris Micacchi!)
 
 
 Features
 --------
 
-Currently PlantFarm supports
+Currently FactoryNet supports
 
 * Object creation via properties
 * Object creation by constructor arguments
@@ -22,10 +22,10 @@ Currently PlantFarm supports
 * Lazily evaluated property and constructor argument values
 * Sequenced properties
 * Allow user to specify after-create actions on models (to save the model to the DB after creation, for instance)
+* Allowing multiple different definitions for one object
 
 Targetted features can be found in the issues list for the project.  Some specific ones are
 
-* Allowing multiple different definitions for one object
 * Specify associated instances
 
 
@@ -67,7 +67,7 @@ To define a Blueprint property that is evaluated lazily, but with a sequence cou
     {
       public void SetupPlant(BasePlant plant)
       {
-        plant.DefinePropertiesOf<Person>(new
+        plant.Define(() => new Person
                                {
                                   ID = Sequence.Evaluate((sequenceValue) => sequenceValue),
                                   Name = Sequence.Evaluate((sequenceValue) => string.Format("Name {0}", sequenceValue))
@@ -81,18 +81,18 @@ Usage
 
 To create a new Plant, you'll typically want to tell it which Assembly to look in for Blueprints.  You can do this via
 
-    var plant = new BasePlant().WithBlueprintsFromAssemblyOf<PersonBlueprint>();
+    var factory = new BaseFactory().WithBlueprintsFromAssemblyOf<PersonBlueprint>();
   
 where PersonBlueprint is one of the Blueprints you have defined.  Plant will then load blueprints from any other type that implements the Blueprint interface in that assembly.
 
 To retrieve the default instance of an object
 
-    var person = plant.Create<Person>();
+    var person = factory.Create<Person>();
   
 To retrieve an instance of a person with specific parts of the default blueprint overridden
 
-    var person = plant.Create<Person>(p => p.EmailAddress = "john@doe.com" );
+    var person = factory.Create<Person>(p => p.EmailAddress = "john@doe.com" );
   
 Multiple properties can be overridden in one call
 
-    var person = plant.Create<Person>(p => { p.EmailAddress = "john@doe.com"; p.State = "GA"; });
+    var person = factory.Create<Person>(p => { p.EmailAddress = "john@doe.com"; p.State = "GA"; });

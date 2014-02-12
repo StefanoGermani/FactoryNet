@@ -6,12 +6,12 @@ using NUnit.Framework;
 namespace FactoryNet.Tests
 {
     [TestFixture]
-    public class BasePlantVariationsTests
+    public class BaseFactoryVariationsTests
     {
         [SetUp]
         public void SetUp()
         {
-            _plant = new BasePlant();
+            _plant = new BaseFactory();
         }
 
         private IPlant _plant;

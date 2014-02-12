@@ -44,12 +44,12 @@
   <ItemGroup>
     <Compile Include="Helpers\BluePrintKeyHelper.cs" />
     <Compile Include="Exceptions\WrongDefinitionTypeException.cs" />
-    <Compile Include="BasePlant.cs" />
+    <Compile Include="BaseFactory.cs" />
     <Compile Include="Dictionaries\CreatedBlueprintsDictionary.cs" />
     <Compile Include="Dictionaries\ConstructorDictionary.cs" />
     <Compile Include="Exceptions\DuplicateBlueprintException.cs" />
     <Compile Include="Helpers\ConstructorHelper.cs" />
-    <Compile Include="PersisterPlant.cs" />
+    <Compile Include="PersisterFactory.cs" />
     <Compile Include="Exceptions\PersisterException.cs" />
     <Compile Include="Dictionaries\PropertyDictionary.cs" />
     <Compile Include="Dictionaries\SequenceDictionary.cs" />
@@ -57,7 +57,7 @@
     <Compile Include="IPersisterSeed.cs" />
     <Compile Include="IPlant.cs" />
     <Compile Include="IBlueprint.cs" />
-    <Compile Include="PlantFarmModule.cs" />
+    <Compile Include="FactoryNetModule.cs" />
     <Compile Include="PropertyData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Exceptions\PropertyNotFoundException.cs" />
