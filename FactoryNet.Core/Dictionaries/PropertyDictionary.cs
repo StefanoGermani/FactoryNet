@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -13,7 +14,7 @@ namespace FactoryNet.Core.Dictionaries
         bool ContainsKey<T>(string variant);
     }
 
-    internal class PropertyDictionary : IPropertyDictionary
+    internal class PropertyDictionary : BaseList<Tuple<PropertyData, Expression>>, IPropertyDictionary
     {
         private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
 

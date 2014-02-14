@@ -36,7 +36,7 @@ namespace FactoryNet.Core
     {
         private readonly IConstructorHelper _constructorHelper;
 
-        private readonly IConstructorDictionary _costructors;
+        private readonly IConstructorList _costructors;
         private readonly IPropertyDictionary _properties;
         private readonly ISequenceDictionary _sequenceValues;
         private readonly IPostCreationActionDictionary _postCreationActions;
@@ -49,7 +49,7 @@ namespace FactoryNet.Core
             var kernel = new StandardKernel(new FactoryNetModule());
 
             _constructorHelper = kernel.Get<IConstructorHelper>();
-            _costructors = kernel.Get<IConstructorDictionary>();
+            _costructors = kernel.Get<IConstructorList>();
             _properties = kernel.Get<IPropertyDictionary>();
             _sequenceValues = kernel.Get<ISequenceDictionary>();
             _postCreationActions = kernel.Get<IPostCreationActionDictionary>();
@@ -127,7 +127,7 @@ namespace FactoryNet.Core
             // Also if the property has a value, don't override.
             foreach (PropertyInfo prop in constructedObject.GetType().GetProperties())
             {
-                if (!_costructors.ContainsType(variation, prop.PropertyType) || prop.GetValue(constructedObject, null) != null)
+                if (!_costructors.ContainsKey(variation, prop.PropertyType) || prop.GetValue(constructedObject, null) != null)
                     continue;
 
                 // check if property has a setter
@@ -220,7 +220,7 @@ namespace FactoryNet.Core
 
         public virtual void Define<T>(string variation, Expression<Func<T>> definition, Action<T> afterCreation)
         {
-            if (_costructors.ContainsType<T>(variation))
+            if (_costructors.ContainsKey<T>(variation))
                 throw new DuplicateBlueprintException(typeof(T), variation);
 
             switch (definition.Body.NodeType)

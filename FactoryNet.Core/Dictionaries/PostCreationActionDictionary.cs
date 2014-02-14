@@ -11,30 +11,16 @@ namespace FactoryNet.Core.Dictionaries
         void ExecuteAction<T>(string variation, T constructedObject);
     }
 
-    internal class PostCreationActionDictionary : IPostCreationActionDictionary
+    internal class PostCreationActionDictionary : BaseList<object>, IPostCreationActionDictionary
     {
-        private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
-
-        private readonly IDictionary<string, object> _postCreationActions = new Dictionary<string, object>();
-
-        public PostCreationActionDictionary(IBluePrintKeyHelper bluePrintKeyHelper)
-        {
-            _bluePrintKeyHelper = bluePrintKeyHelper;
-        }
-
         public void Add<T>(string variation, Action<T> afterCreation)
         {
-            _postCreationActions.Add(_bluePrintKeyHelper.GetBluePrintKey<T>(variation), afterCreation);
-        }
-
-        public bool ContainsKey<T>(string variation)
-        {
-            return _postCreationActions.ContainsKey(_bluePrintKeyHelper.GetBluePrintKey<T>(variation));
+            base.Add<T>(variation, afterCreation);
         }
 
         public void ExecuteAction<T>(string variation, T constructedObject)
         {
-            ((Action<T>)_postCreationActions[_bluePrintKeyHelper.GetBluePrintKey<T>(variation)])(constructedObject);
+            ((Action<T>)base.Get<T>(variation))(constructedObject);
         }
     }
 }

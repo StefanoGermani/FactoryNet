@@ -11,7 +11,7 @@ namespace FactoryNet.Core
             Bind<IConstructorHelper>().To<ConstructorHelper>();
             Bind<IBluePrintKeyHelper>().To<BluePrintKeyHelper>();
 
-            Bind<IConstructorDictionary>().To<ConstructorDictionary>();
+            Bind<IConstructorList>().To<ConstructorList>();
             Bind<ISequenceDictionary>().To<SequenceDictionary>();
             Bind<IPropertyDictionary>().To<PropertyDictionary>();
             Bind<ICreatedBlueprintsDictionary>().To<CreatedBlueprintsDictionary>();

@@ -43,11 +43,12 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dictionaries\BaseList.cs" />
     <Compile Include="Helpers\BluePrintKeyHelper.cs" />
     <Compile Include="Exceptions\WrongDefinitionTypeException.cs" />
     <Compile Include="BaseFactory.cs" />
     <Compile Include="Dictionaries\CreatedBlueprintsDictionary.cs" />
-    <Compile Include="Dictionaries\ConstructorDictionary.cs" />
+    <Compile Include="Dictionaries\ConstructorList.cs" />
     <Compile Include="Exceptions\DuplicateBlueprintException.cs" />
     <Compile Include="Helpers\ConstructorHelper.cs" />
     <Compile Include="PersisterFactory.cs" />

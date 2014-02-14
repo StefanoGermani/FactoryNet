@@ -10,30 +10,16 @@ namespace FactoryNet.Core.Dictionaries
         T Get<T>(string varation);
     }
 
-    internal class CreatedBlueprintsDictionary : ICreatedBlueprintsDictionary
+    internal class CreatedBlueprintsDictionary : BaseList<object>, ICreatedBlueprintsDictionary
     {
-        private readonly IBluePrintKeyHelper _bluePrintKeyHelper;
-
-        private readonly Dictionary<string, object> _createdBluePrints = new Dictionary<string, object>();
-
-        public CreatedBlueprintsDictionary(IBluePrintKeyHelper bluePrintKeyHelper)
-        {
-            _bluePrintKeyHelper = bluePrintKeyHelper;
-        }
-
         public void Add<T>(string variation, T createdObject)
         {
-            _createdBluePrints.Add(_bluePrintKeyHelper.GetBluePrintKey<T>(variation), createdObject);
+            base.Add<T>(variation, createdObject);
         }
 
-        public bool ContainsKey<T>(string variation)
+        public new T Get<T>(string varation)
         {
-            return _createdBluePrints.ContainsKey(_bluePrintKeyHelper.GetBluePrintKey<T>(variation));
-        }
-
-        public T Get<T>(string varation)
-        {
-            return (T)_createdBluePrints[_bluePrintKeyHelper.GetBluePrintKey<T>(varation)];
+            return (T)base.Get<T>(varation);
         }
     }
 }
