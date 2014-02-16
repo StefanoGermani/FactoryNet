@@ -32,20 +32,20 @@ Terms
 -----
 
 A 'Factory' is the thing that creates your objects for you.  
-A 'Blueprint' is what a user provides to tell a plant how to create an object.
+A 'Blueprint' is what a user provides to tell a factory how to create an object.
 
 Defining a Blueprint
 --------------------
 
-A Blueprint is just a class that implements the Blueprint interface.  The interface defines one method, SetupPlant, which takes a BasePlant object.  SetupPlant is a generic method which whose generic argument is the Type that you're setting up and an anonymous object with the appropriate properties.
+A Blueprint is just a class that implements the Blueprint interface. The interface defines one method, Setup, which takes a BaseFactory object. Setup is a generic method which whose generic argument is the Type that you're setting up and an anonymous object with the appropriate properties.
 
 Note that currently property validation occurs during object creation, not Define.
 
     class PersonBlueprint : Blueprint
     {
-      public void SetupPlant(BasePlant plant)
+      public void Setup(BaseFactory factory)
       {
-        plant.Define(() => new Person("Barbara")
+        factory.Define(() => new Person("Barbara")
                                {
                                   LastName = "Brechtel",
                                   Address = "111 South Main St.",
@@ -64,9 +64,9 @@ To define a Blueprint property that is evaluated lazily, but with a sequence cou
 
     class PersonBlueprint : Blueprint
     {
-      public void SetupPlant(BasePlant plant)
+      public void Setup(BaseFactory factory)
       {
-        plant.Define(() => new Person
+        factory.Define(() => new Person
                            {
                               ID = Sequence.Evaluate((i) => i),
                               Name = Sequence.Evaluate((i) => string.Format("Name {0}", i))
@@ -95,3 +95,8 @@ To retrieve an instance of a person with specific parts of the default blueprint
 Multiple properties can be overridden in one call
 
     var person = factory.Create<Person>(p => { p.EmailAddress = "john@doe.com"; p.State = "GA"; });
+	
+
+Thanks
+-------
+
