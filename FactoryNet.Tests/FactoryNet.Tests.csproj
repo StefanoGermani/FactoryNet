@@ -55,7 +55,6 @@
     <Compile Include="BaseFactoryCreatedObjectsTests.cs" />
     <Compile Include="Helpers\ConstructorHelperTests.cs" />
     <Compile Include="TestBlueprints\TestBlueprint.cs" />
-    <Compile Include="Helpers\BluePrintKeyHelperTests.cs" />
     <Compile Include="IDummy.cs" />
     <Compile Include="PersisterFactoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

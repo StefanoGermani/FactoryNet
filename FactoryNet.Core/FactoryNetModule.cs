@@ -9,14 +9,12 @@ namespace FactoryNet.Core
         public override void Load()
         {
             Bind<IConstructorHelper>().To<ConstructorHelper>();
-            Bind<IBluePrintKeyHelper>().To<BluePrintKeyHelper>();
 
             Bind<IConstructors>().To<Constructors>();
             Bind<ISequences>().To<Sequences>();
             Bind<IProperties>().To<Properties>();
             Bind<ICreatedBlueprints>().To<CreatedBlueprints>();
             Bind<IPostCreationActions>().To<PostCreationActions>();
-
         }
     }
 }
