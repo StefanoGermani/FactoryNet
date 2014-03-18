@@ -5,7 +5,7 @@ using FactoryNet.Core.Exceptions;
 
 namespace FactoryNet.Core.Dictionaries
 {
-    internal class BaseList<TProperty> : List<Tuple<Type, string, TProperty>>
+    internal class BaseObject<TProperty> : List<Tuple<Type, string, TProperty>>
     {
         public virtual TProperty Get<T>(string variation)
         {

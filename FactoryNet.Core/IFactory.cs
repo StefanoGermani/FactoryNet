@@ -5,14 +5,14 @@ using System.Reflection;
 
 namespace FactoryNet.Core
 {
-    public interface IPlant
+    public interface IFactory
     {
         event BluePrintCreatedEventHandler BluePrintCreated;
         event ObjectDeletedEventHandler ObjectDeleted;
 
-        IPlant LoadBlueprintsFromAssembly(Assembly assembly);
-        IPlant LoadBlueprintsFromAssemblies();
-        IPlant LoadBlueprintsFromCurrentAssembly();
+        IFactory LoadBlueprintsFromAssembly(Assembly assembly);
+        IFactory LoadBlueprintsFromAssemblies();
+        IFactory LoadBlueprintsFromCurrentAssembly();
 
 
         IList<object> CreatedObjects { get; }

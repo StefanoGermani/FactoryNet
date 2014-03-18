@@ -57,7 +57,7 @@
     <Compile Include="Dictionaries\SequenceDictionary.cs" />
     <Compile Include="Dictionaries\PostCreationActionDictionary.cs" />
     <Compile Include="IPersisterSeed.cs" />
-    <Compile Include="IPlant.cs" />
+    <Compile Include="IFactory.cs" />
     <Compile Include="IBlueprint.cs" />
     <Compile Include="FactoryNetModule.cs" />
     <Compile Include="PropertyData.cs" />

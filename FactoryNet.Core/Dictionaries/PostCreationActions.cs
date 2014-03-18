@@ -4,14 +4,14 @@ using FactoryNet.Core.Helpers;
 
 namespace FactoryNet.Core.Dictionaries
 {
-    internal interface IPostCreationActionDictionary
+    internal interface IPostCreationActions
     {
         void Add<T>(string variation, Action<T> afterCreation);
         bool ContainsKey<T>(string variation);
         void ExecuteAction<T>(string variation, T constructedObject);
     }
 
-    internal class PostCreationActionDictionary : BaseList<object>, IPostCreationActionDictionary
+    internal class PostCreationActions : BaseObject<object>, IPostCreationActions
     {
         public void Add<T>(string variation, Action<T> afterCreation)
         {

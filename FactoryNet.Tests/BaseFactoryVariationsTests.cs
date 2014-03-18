@@ -11,42 +11,42 @@ namespace FactoryNet.Tests
         [SetUp]
         public void SetUp()
         {
-            _plant = new BaseFactory();
+            _factory = new BaseFactory();
         }
 
-        private IPlant _plant;
+        private IFactory _factory;
 
 
         [Test]
         public void Should_Create_Variation_Of_Specified_Type()
         {
-            _plant.Define(() => new Person { FirstName = "" });
-            _plant.Define("My", () => new Person { FirstName = "My" });
-            _plant.Define("Her", () => new Person { FirstName = "Her" });
+            _factory.Define(() => new Person { FirstName = "" });
+            _factory.Define("My", () => new Person { FirstName = "My" });
+            _factory.Define("Her", () => new Person { FirstName = "Her" });
 
-            Assert.IsInstanceOf(typeof(Person), _plant.Create<Person>());
-            Assert.IsInstanceOf(typeof(Person), _plant.Create<Person>("My"));
-            Assert.IsInstanceOf(typeof(Person), _plant.Create<Person>("Her"));
+            Assert.IsInstanceOf(typeof(Person), _factory.Create<Person>());
+            Assert.IsInstanceOf(typeof(Person), _factory.Create<Person>("My"));
+            Assert.IsInstanceOf(typeof(Person), _factory.Create<Person>("Her"));
         }
 
         [Test]
         public void Should_Create_Variation_Of_Specified_Type_With_Correct_Data()
         {
-            _plant.Define(() => new Person { FirstName = "" });
-            _plant.Define("My", () => new Person { FirstName = "My" });
+            _factory.Define(() => new Person { FirstName = "" });
+            _factory.Define("My", () => new Person { FirstName = "My" });
 
-            var person = _plant.Create<Person>("My");
+            var person = _factory.Create<Person>("My");
             Assert.AreEqual("My", person.FirstName);
         }
 
         [Test]
         public void Should_Create_Variation_With_Extension()
         {
-            _plant.Define(() => new House { Color = "blue" }, OnPropertyPopulation);
-            _plant.Define("My", () => new House { Color = "My" }, OnPropertyPopulationVariation);
+            _factory.Define(() => new House { Color = "blue" }, OnPropertyPopulation);
+            _factory.Define("My", () => new House { Color = "My" }, OnPropertyPopulationVariation);
 
-            Assert.AreEqual(_plant.Create<House>().Persons.First().FirstName, "Pablo");
-            Assert.AreEqual(_plant.Create<House>("My").Persons.First().FirstName, "Pedro");
+            Assert.AreEqual(_factory.Create<House>().Persons.First().FirstName, "Pablo");
+            Assert.AreEqual(_factory.Create<House>("My").Persons.First().FirstName, "Pedro");
         }
 
         private static void OnPropertyPopulation(House h)

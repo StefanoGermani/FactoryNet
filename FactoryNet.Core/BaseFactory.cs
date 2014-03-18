@@ -32,15 +32,15 @@ namespace FactoryNet.Core
 
     #endregion
 
-    public class BaseFactory : IPlant
+    public class BaseFactory : IFactory
     {
         private readonly IConstructorHelper _constructorHelper;
 
-        private readonly IConstructorList _costructors;
-        private readonly IPropertyDictionary _properties;
-        private readonly ISequenceDictionary _sequenceValues;
-        private readonly IPostCreationActionDictionary _postCreationActions;
-        private readonly ICreatedBlueprintsDictionary _createdBluePrints;
+        private readonly IConstructors _costructors;
+        private readonly IProperties _properties;
+        private readonly ISequences _sequenceValues;
+        private readonly IPostCreationActions _postCreationActions;
+        private readonly ICreatedBlueprints _createdBluePrints;
 
         private readonly List<object> _createdObjects;
 
@@ -49,11 +49,11 @@ namespace FactoryNet.Core
             var kernel = new StandardKernel(new FactoryNetModule());
 
             _constructorHelper = kernel.Get<IConstructorHelper>();
-            _costructors = kernel.Get<IConstructorList>();
-            _properties = kernel.Get<IPropertyDictionary>();
-            _sequenceValues = kernel.Get<ISequenceDictionary>();
-            _postCreationActions = kernel.Get<IPostCreationActionDictionary>();
-            _createdBluePrints = kernel.Get<ICreatedBlueprintsDictionary>();
+            _costructors = kernel.Get<IConstructors>();
+            _properties = kernel.Get<IProperties>();
+            _sequenceValues = kernel.Get<ISequences>();
+            _postCreationActions = kernel.Get<IPostCreationActions>();
+            _createdBluePrints = kernel.Get<ICreatedBlueprints>();
 
             _createdObjects = new List<object>();
         }
@@ -255,7 +255,7 @@ namespace FactoryNet.Core
             _createdObjects.Clear();
         }
 
-        public IPlant LoadBlueprintsFromCurrentAssembly()
+        public IFactory LoadBlueprintsFromCurrentAssembly()
         {
             var blueprintTypes = Assembly.GetCallingAssembly().GetTypes().Where(t => t.IsClass && typeof(IBlueprint).IsAssignableFrom(t));
             blueprintTypes.ToList().ForEach(blueprintType =>
@@ -267,7 +267,7 @@ namespace FactoryNet.Core
             return this;
         }
 
-        public IPlant LoadBlueprintsFromAssembly(Assembly assembly)
+        public IFactory LoadBlueprintsFromAssembly(Assembly assembly)
         {
             var blueprintTypes = assembly.GetTypes().Where(t => t.IsClass && typeof(IBlueprint).IsAssignableFrom(t));
             blueprintTypes.ToList().ForEach(blueprintType =>
@@ -279,7 +279,7 @@ namespace FactoryNet.Core
             return this;
         }
 
-        public IPlant LoadBlueprintsFromAssemblies()
+        public IFactory LoadBlueprintsFromAssemblies()
         {
             AppDomain.CurrentDomain.GetAssemblies().ToList().ForEach(t => LoadBlueprintsFromAssembly(t));
 

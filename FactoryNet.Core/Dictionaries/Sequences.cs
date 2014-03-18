@@ -4,12 +4,12 @@ using System.Reflection;
 
 namespace FactoryNet.Core.Dictionaries
 {
-    internal interface ISequenceDictionary
+    internal interface ISequences
     {
         int GetSequenceValue<T>(PropertyInfo propertyInfo);
     }
 
-    internal class SequenceDictionary : ISequenceDictionary
+    internal class Sequences : ISequences
     {
         private readonly Dictionary<Type, Dictionary<PropertyInfo, int>> _sequenceValues =
             new Dictionary<Type, Dictionary<PropertyInfo, int>>();

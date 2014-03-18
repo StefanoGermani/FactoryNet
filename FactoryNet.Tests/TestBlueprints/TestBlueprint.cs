@@ -5,7 +5,7 @@ namespace FactoryNet.Tests.TestBlueprints
 {
     class TestBlueprint : IBlueprint
     {
-        public void SetupPlant(IPlant p)
+        public void SetupPlant(IFactory p)
         {
             p.Define(() => new House());
         }

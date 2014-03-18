@@ -6,7 +6,7 @@ using FactoryNet.Core.Exceptions;
 
 namespace FactoryNet.Core.Dictionaries
 {
-    internal interface IConstructorList
+    internal interface IConstructors
     {
         NewExpression Get<T>(string variation);
         void Add<T>(string variation, NewExpression newExpression);
@@ -14,7 +14,7 @@ namespace FactoryNet.Core.Dictionaries
         bool ContainsKey(string variation, Type type);
     }
 
-    internal class ConstructorList : BaseList<NewExpression>, IConstructorList
+    internal class Constructors : BaseObject<NewExpression>, IConstructors
     {
     }
 }

@@ -3,14 +3,14 @@ using FactoryNet.Core.Helpers;
 
 namespace FactoryNet.Core.Dictionaries
 {
-    internal interface ICreatedBlueprintsDictionary
+    internal interface ICreatedBlueprints
     {
         void Add<T>(string variation, T createdObject);
         bool ContainsKey<T>(string variation);
         T Get<T>(string varation);
     }
 
-    internal class CreatedBlueprintsDictionary : BaseList<object>, ICreatedBlueprintsDictionary
+    internal class CreatedBlueprints : BaseObject<object>, ICreatedBlueprints
     {
         public void Add<T>(string variation, T createdObject)
         {

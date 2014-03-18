@@ -14,11 +14,11 @@ namespace FactoryNet.Tests
         public void SetUp()
         {
             _persister = MockRepository.GenerateMock<IPersisterSeed>();
-            _plant = new PersisterFactory(_persister);
+            _factory = new PersisterFactory(_persister);
         }
 
         private IPersisterSeed _persister;
-        private IPlant _plant;
+        private IFactory _factory;
 
         [Test]
         public void Should_Call_Persister_Save_Method_When_Creating_Objects()
@@ -26,8 +26,8 @@ namespace FactoryNet.Tests
             _persister.Expect(a => a.Save(Arg<object>.Is.Anything)).Return(true);
 
 
-            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
-            _plant.Create<House>();
+            _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _factory.Create<House>();
 
             _persister.VerifyAllExpectations();
         }
@@ -35,8 +35,8 @@ namespace FactoryNet.Tests
         [Test]
         public void Should_Not_Call_Persister_Save_Method_When_Building_Objects()
         {
-            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
-            _plant.Build<House>();
+            _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _factory.Build<House>();
 
             _persister.AssertWasNotCalled(p => p.Save(Arg<object>.Is.Anything));
         }
@@ -48,8 +48,8 @@ namespace FactoryNet.Tests
             _persister.Stub(a => a.Save(Arg<House>.Is.Anything)).Return(false);
 
 
-            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
-            _plant.Create<House>();
+            _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _factory.Create<House>();
         }
 
         [Test]
@@ -59,8 +59,8 @@ namespace FactoryNet.Tests
             _persister.Stub(a => a.Save(Arg<House>.Is.Anything)).Throw(new Exception());
 
 
-            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
-            _plant.Create<House>();
+            _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _factory.Create<House>();
         }
 
         [Test]
@@ -69,10 +69,10 @@ namespace FactoryNet.Tests
             _persister.Stub(a => a.Save(Arg<object>.Is.Anything)).Return(true);
             _persister.Expect(a => a.Delete(Arg<object>.Is.Anything)).Return(true);
 
-            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
-            _plant.Create<House>();
+            _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _factory.Create<House>();
 
-            _plant.ClearCreatedObjects();
+            _factory.ClearCreatedObjects();
 
             _persister.VerifyAllExpectations();
         }
@@ -83,13 +83,13 @@ namespace FactoryNet.Tests
             _persister.Stub(a => a.Save(Arg<object>.Is.Anything)).Return(true);
             _persister.Stub(a => a.Delete(Arg<object>.Is.Anything)).Return(true);
 
-            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
-            _plant.Define(() => new Person() { FirstName = "Name" });
-            var house = _plant.Create<House>();
-            var person = _plant.Create<Person>();
+            _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _factory.Define(() => new Person() { FirstName = "Name" });
+            var house = _factory.Create<House>();
+            var person = _factory.Create<Person>();
 
 
-            _plant.ClearCreatedObjects();
+            _factory.ClearCreatedObjects();
 
             _persister.AssertWasCalled(x => x.Delete(person), options => options.Repeat.Once());
             _persister.AssertWasCalled(x => x.Delete(house), options => options.Repeat.Once());
@@ -102,10 +102,10 @@ namespace FactoryNet.Tests
             _persister.Stub(a => a.Delete(Arg<House>.Is.Anything)).Return(false);
 
 
-            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
-            _plant.Create<House>();
+            _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _factory.Create<House>();
 
-            _plant.ClearCreatedObjects();
+            _factory.ClearCreatedObjects();
         }
 
         [Test]
@@ -115,10 +115,10 @@ namespace FactoryNet.Tests
             _persister.Stub(a => a.Delete(Arg<House>.Is.Anything)).Throw(new Exception());
 
 
-            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
-            _plant.Create<House>();
+            _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _factory.Create<House>();
 
-            _plant.ClearCreatedObjects();
+            _factory.ClearCreatedObjects();
         }
 
 

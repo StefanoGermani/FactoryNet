@@ -11,11 +11,11 @@ namespace FactoryNet.Core
             Bind<IConstructorHelper>().To<ConstructorHelper>();
             Bind<IBluePrintKeyHelper>().To<BluePrintKeyHelper>();
 
-            Bind<IConstructorList>().To<ConstructorList>();
-            Bind<ISequenceDictionary>().To<SequenceDictionary>();
-            Bind<IPropertyDictionary>().To<PropertyDictionary>();
-            Bind<ICreatedBlueprintsDictionary>().To<CreatedBlueprintsDictionary>();
-            Bind<IPostCreationActionDictionary>().To<PostCreationActionDictionary>();
+            Bind<IConstructors>().To<Constructors>();
+            Bind<ISequences>().To<Sequences>();
+            Bind<IProperties>().To<Properties>();
+            Bind<ICreatedBlueprints>().To<CreatedBlueprints>();
+            Bind<IPostCreationActions>().To<PostCreationActions>();
 
         }
     }

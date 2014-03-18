@@ -15,19 +15,19 @@ namespace FactoryNet.Tests
         [SetUp]
         public void SetUp()
         {
-            _plant = new BaseFactory();
+            _factory = new BaseFactory();
         }
 
-        private IPlant _plant;
+        private IFactory _factory;
 
         [Test]
         public void Can_Create_Two_Different_House()
         {
-            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
-            _plant.Define(() => new Person { FirstName = "Leo" });
+            _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _factory.Define(() => new Person { FirstName = "Leo" });
 
-            var house = _plant.Create<House>();
-            var redHouse = _plant.Create<House>(h => h.Color = "red");
+            var house = _factory.Create<House>();
+            var redHouse = _factory.Create<House>(h => h.Color = "red");
 
             Assert.AreNotEqual(house, redHouse);
             Assert.AreNotEqual(house.Color, redHouse.Color);
@@ -39,12 +39,12 @@ namespace FactoryNet.Tests
             var dummy = MockRepository.GenerateStub<IDummy>();
             dummy.Expect(d => d.Test()).Repeat.Twice();
 
-            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
-            _plant.Define(() => new Person { FirstName = "Leo" });
+            _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _factory.Define(() => new Person { FirstName = "Leo" });
 
-            _plant.BluePrintCreated += (sender, e) => dummy.Test();
-            _plant.Create<House>();
-            _plant.Create<Person>();
+            _factory.BluePrintCreated += (sender, e) => dummy.Test();
+            _factory.Create<House>();
+            _factory.Create<Person>();
 
             dummy.VerifyAllExpectations();
         }
@@ -52,10 +52,10 @@ namespace FactoryNet.Tests
         [Test]
         public void Should_Build_Relation()
         {
-            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
-            _plant.Define(() => new Person { FirstName = "Leo" });
+            _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _factory.Define(() => new Person { FirstName = "Leo" });
 
-            var person = _plant.Build<Person>();
+            var person = _factory.Build<Person>();
 
             Assert.IsNotNull(person.HouseWhereILive);
         }
@@ -63,27 +63,27 @@ namespace FactoryNet.Tests
         [Test]
         public void Should_Call_AfterCreationCallback_After_Building()
         {
-            _plant.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
+            _factory.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
                           p => p.FullName = p.FirstName + p.LastName);
-            var builtPerson = _plant.Build<Person>();
+            var builtPerson = _factory.Build<Person>();
             Assert.AreEqual(null, builtPerson.FullName);
         }
 
         [Test]
         public void Should_Call_AfterCreationCallback_After_Creation()
         {
-            _plant.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
+            _factory.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
                           p => p.FullName = p.FirstName + p.LastName);
-            var builtPerson = _plant.Create<Person>();
+            var builtPerson = _factory.Create<Person>();
             Assert.AreEqual("AngusMacGyver", builtPerson.FullName);
         }
 
         [Test]
         public void Should_Create_By_Constructor_With_Parameters()
         {
-            _plant.Define(() => new Car("make"));
+            _factory.Define(() => new Car("make"));
 
-            var car = _plant.Create<Car>();
+            var car = _factory.Create<Car>();
 
             Assert.AreEqual("make", car.Make);
         }
@@ -91,39 +91,39 @@ namespace FactoryNet.Tests
         [Test]
         public void Should_Create_Instance_Of_Specified_Type()
         {
-            _plant.Define(() => new Person());
+            _factory.Define(() => new Person());
 
-            Assert.IsInstanceOf(typeof(Person), _plant.Create<Person>());
+            Assert.IsInstanceOf(typeof(Person), _factory.Create<Person>());
         }
 
         [Test]
         public void Should_Create_Instance_With_Null_Value()
         {
-            _plant.Define(() => new Person { FirstName = "Barbara", LastName = (string)null });
-            Assert.IsNull(_plant.Create<Person>().LastName);
+            _factory.Define(() => new Person { FirstName = "Barbara", LastName = (string)null });
+            Assert.IsNull(_factory.Create<Person>().LastName);
         }
 
         [Test]
         public void Should_Create_Instance_With_Not_Constant_Value()
         {
-            _plant.Define(() => new House(new Random().Next().ToString(CultureInfo.InvariantCulture), new Random().Next()));
-            Assert.IsNotNull(_plant.Create<House>());
+            _factory.Define(() => new House(new Random().Next().ToString(CultureInfo.InvariantCulture), new Random().Next()));
+            Assert.IsNotNull(_factory.Create<House>());
         }
 
         [Test]
         public void Should_Create_Instance_With_Requested_Properties()
         {
-            _plant.Define(() => new Person { FirstName = "" });
-            Assert.AreEqual("James", _plant.Create<Person>(p => p.FirstName = "James").FirstName);
+            _factory.Define(() => new Person { FirstName = "" });
+            Assert.AreEqual("James", _factory.Create<Person>(p => p.FirstName = "James").FirstName);
         }
 
         [Test]
         public void Should_Create_Objects_In_AfterCreationCallback()
         {
-            _plant.Define(() => new House());
-            _plant.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
-                          p => p.HouseWhereILive = _plant.Create<House>(x => x.Color = "Red"));
-            var builtPerson = _plant.Create<Person>();
+            _factory.Define(() => new House());
+            _factory.Define(() => new Person { FirstName = "Angus", LastName = "MacGyver" },
+                          p => p.HouseWhereILive = _factory.Create<House>(x => x.Color = "Red"));
+            var builtPerson = _factory.Create<Person>();
 
             Assert.NotNull(builtPerson.HouseWhereILive);
             Assert.AreEqual(builtPerson.HouseWhereILive.Color, "Red");
@@ -133,29 +133,29 @@ namespace FactoryNet.Tests
         public void Should_Lazily_Evaluate_Properties()
         {
             string lazyMiddleName = null;
-            _plant.Define(() => new Person
+            _factory.Define(() => new Person
                 {
                     MiddleName = lazyMiddleName
                 });
 
-            Assert.AreEqual(null, _plant.Create<Person>().MiddleName);
+            Assert.AreEqual(null, _factory.Create<Person>().MiddleName);
             lazyMiddleName = "Johnny";
-            Assert.AreEqual("Johnny", _plant.Create<Person>().MiddleName);
+            Assert.AreEqual("Johnny", _factory.Create<Person>().MiddleName);
         }
 
         [Test]
         public void Should_Not_Evaluate_Property_Without_Setter()
         {
-            Assert.DoesNotThrow(() => _plant.Define(() => new Dog { Name = "Bob" }));
+            Assert.DoesNotThrow(() => _factory.Define(() => new Dog { Name = "Bob" }));
         }
 
         [Test]
         public void Should_Not_Prefill_Relation_Defined()
         {
-            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
-            _plant.Define(() => new Person { FirstName = "Leo", HouseWhereILive = new House { Color = "Violet" } });
+            _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _factory.Define(() => new Person { FirstName = "Leo", HouseWhereILive = new House { Color = "Violet" } });
 
-            var person = _plant.Create<Person>();
+            var person = _factory.Create<Person>();
 
             Assert.AreEqual("Violet", person.HouseWhereILive.Color);
         }
@@ -163,42 +163,42 @@ namespace FactoryNet.Tests
         [Test]
         public void Should_Not_Try_To_Populate_Property_Without_Setter()
         {
-            _plant.Define(() => new Dog { Name = "Bob" });
+            _factory.Define(() => new Dog { Name = "Bob" });
 
-            Assert.DoesNotThrow(() => _plant.Create<Dog>());
+            Assert.DoesNotThrow(() => _factory.Create<Dog>());
         }
 
         [Test, Ignore("Can't do it on 3.5 .Net Framework")]
         public void Should_Only_Set_Properties_Once()
         {
-            _plant.Define(() => new WriteOnceMemoryModule { Value = 5000 });
-            Assert.AreEqual(10, _plant.Create<WriteOnceMemoryModule>(x => x.Value = 10).Value);
+            _factory.Define(() => new WriteOnceMemoryModule { Value = 5000 });
+            Assert.AreEqual(10, _factory.Create<WriteOnceMemoryModule>(x => x.Value = 10).Value);
         }
 
         //[Test]
         //public void Should_Override_Default_Constructor_Arguments()
         //{
-        //    _plant.Define(() => new House { Color = "Red", SquareFoot = 3000 });
+        //    _factory.Define(() => new House { Color = "Red", SquareFoot = 3000 });
 
-        //    Assert.AreEqual("Blue", _plant.Create(() => new House("Blue", 5)).Color);
+        //    Assert.AreEqual("Blue", _factory.Create(() => new House("Blue", 5)).Color);
         //}
 
         //[Test]
         //public void Should_Override_Default_Properties()
         //{
-        //    _plant.Define(() => new House { Color = "Red", SquareFoot = 3000 });
+        //    _factory.Define(() => new House { Color = "Red", SquareFoot = 3000 });
 
-        //    Assert.AreEqual("Blue", _plant.Create(() => new House() { Color = "Blue" }).Color);
+        //    Assert.AreEqual("Blue", _factory.Create(() => new House() { Color = "Blue" }).Color);
         //}
 
         [Test]
         public void Should_Prefill_Relation()
         {
-            _plant.Define(() => new House { Color = "blue", SquareFoot = 50 });
-            _plant.Define(() => new Person { FirstName = "Leo" });
+            _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
+            _factory.Define(() => new Person { FirstName = "Leo" });
 
-            var house = _plant.Create<House>();
-            var person = _plant.Create<Person>();
+            var house = _factory.Create<House>();
+            var person = _factory.Create<Person>();
 
             Assert.IsNotNull(person.HouseWhereILive);
             Assert.AreEqual(house, person.HouseWhereILive);
@@ -209,53 +209,53 @@ namespace FactoryNet.Tests
         [Test]
         public void Should_Set_User_Properties_That_Are_Not_Defaulted()
         {
-            _plant.Define(() => new Person { FirstName = "Barbara" });
-            Assert.AreEqual("Brechtel", _plant.Create<Person>(p => p.LastName = "Brechtel").LastName);
+            _factory.Define(() => new Person { FirstName = "Barbara" });
+            Assert.AreEqual("Brechtel", _factory.Create<Person>(p => p.LastName = "Brechtel").LastName);
         }
 
         [Test]
         [ExpectedException(typeof(WrongDefinitionTypeException))]
         public void Should_Throw_Exception_If_Not_An_MemberInit_Or_New_Function()
         {
-            _plant.Define(() => string.Empty);
+            _factory.Define(() => string.Empty);
         }
 
         [Test]
         [ExpectedException(typeof(TypeNotSetupException))]
         public void Should_Throw_TypeNotSetupException_When_Trying_To_Create_Type_That_Is_Not_Setup()
         {
-            _plant.Create<Person>(z => z.FirstName = "Barbara");
+            _factory.Create<Person>(z => z.FirstName = "Barbara");
         }
 
         [Test]
         public void Should_Use_Default_Instance_Values()
         {
-            _plant.Define(() => new Person { FirstName = "Barbara" });
-            Assert.AreEqual("Barbara", _plant.Create<Person>().FirstName);
+            _factory.Define(() => new Person { FirstName = "Barbara" });
+            Assert.AreEqual("Barbara", _factory.Create<Person>().FirstName);
         }
 
         [Test]
         public void Should_increment_values_in_a_sequence()
         {
-            _plant.Define(() => new Person
+            _factory.Define(() => new Person
                 {
                     FirstName = Sequence.Evaluate(i => string.Format("FirstName{0}", i))
                 });
-            Assert.AreEqual("FirstName0", _plant.Create<Person>().FirstName);
-            Assert.AreEqual("FirstName1", _plant.Create<Person>(x => x.LastName = "LastName").FirstName);
+            Assert.AreEqual("FirstName0", _factory.Create<Person>().FirstName);
+            Assert.AreEqual("FirstName1", _factory.Create<Person>(x => x.LastName = "LastName").FirstName);
         }
 
         [Test]
         public void Should_increment_values_in_three_sequences()
         {
-            _plant.Define(() => new Person
+            _factory.Define(() => new Person
             {
                 FirstName = Sequence.Evaluate(i => "FirstName" + i),
                 LastName = Sequence.Evaluate(i => "LastName" + i),
                 Age = Sequence.Evaluate(i => i)
             });
 
-            var person = _plant.Create<Person>();
+            var person = _factory.Create<Person>();
 
             Assert.AreEqual("FirstName0", person.FirstName);
             Assert.AreEqual("LastName0", person.LastName);
@@ -265,25 +265,25 @@ namespace FactoryNet.Tests
         [Test]
         public void Should_Load_Blueprint_From_Assembly()
         {
-            _plant.LoadBlueprintsFromAssembly(Assembly.GetExecutingAssembly());
+            _factory.LoadBlueprintsFromAssembly(Assembly.GetExecutingAssembly());
 
-            Assert.DoesNotThrow(() => _plant.Create<House>());
+            Assert.DoesNotThrow(() => _factory.Create<House>());
         }
 
         [Test]
         public void Should_Load_Blueprint_From_Current_Assembly()
         {
-            _plant.LoadBlueprintsFromCurrentAssembly();
+            _factory.LoadBlueprintsFromCurrentAssembly();
 
-            Assert.DoesNotThrow(() => _plant.Create<House>());
+            Assert.DoesNotThrow(() => _factory.Create<House>());
         }
 
         [Test]
         public void Should_Load_Blueprint_From_Loaded_Assemblies()
         {
-            _plant.LoadBlueprintsFromAssemblies();
+            _factory.LoadBlueprintsFromAssemblies();
 
-            Assert.DoesNotThrow(() => _plant.Create<House>());
+            Assert.DoesNotThrow(() => _factory.Create<House>());
         }
 
     }
