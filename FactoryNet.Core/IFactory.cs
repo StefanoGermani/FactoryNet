@@ -7,14 +7,16 @@ namespace FactoryNet.Core
 {
     public interface IFactory
     {
-        event BluePrintCreatedEventHandler BluePrintCreated;
+        event ObjectCreatedEventHandler ObjectCreated;
         event ObjectDeletedEventHandler ObjectDeleted;
 
         IFactory LoadBlueprintsFromAssembly(Assembly assembly);
         IFactory LoadBlueprintsFromAssemblies();
         IFactory LoadBlueprintsFromCurrentAssembly();
 
-
+        /// <summary>
+        /// List of objects created by this factory
+        /// </summary>
         IList<object> CreatedObjects { get; }
 
         T Build<T>();

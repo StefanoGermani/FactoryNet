@@ -14,7 +14,7 @@ namespace FactoryNet.Core.Dictionaries
         bool ContainsKey<T>(string variant);
     }
 
-    internal class Properties : BaseObject<IDictionary<PropertyData, Expression>>, IProperties
+    internal class Properties : BaseList<IDictionary<PropertyData, Expression>>, IProperties
     {
         public void Add<T>(string variation, IEnumerable<MemberBinding> defaults)
         {

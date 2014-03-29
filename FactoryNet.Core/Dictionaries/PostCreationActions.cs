@@ -11,7 +11,7 @@ namespace FactoryNet.Core.Dictionaries
         void ExecuteAction<T>(string variation, T constructedObject);
     }
 
-    internal class PostCreationActions : BaseObject<object>, IPostCreationActions
+    internal class PostCreationActions : BaseList<object>, IPostCreationActions
     {
         public void Add<T>(string variation, Action<T> afterCreation)
         {

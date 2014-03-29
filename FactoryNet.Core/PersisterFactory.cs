@@ -5,23 +5,23 @@ namespace FactoryNet.Core
 {
     public class PersisterFactory : BaseFactory
     {
-        private readonly IPersisterSeed _persisterSeed;
+        private readonly IPersister _persister;
 
-        public PersisterFactory(IPersisterSeed persisterSeed)
+        public PersisterFactory(IPersister persister)
         {
-            if (persisterSeed == null)
+            if (persister == null)
             {
                 throw new PersisterException("Persister is null");
             }
 
-            _persisterSeed = persisterSeed;
+            _persister = persister;
         }
 
         protected override void OnBluePrintCreated(ObjectEventArgs e)
         {
             try
             {
-                if (!_persisterSeed.Save(e.Object))
+                if (!_persister.Save(e.Object))
                 {
                     throw new PersisterException();
                 }
@@ -42,7 +42,7 @@ namespace FactoryNet.Core
         {
             try
             {
-                if (!_persisterSeed.Delete(e.Object))
+                if (!_persister.Delete(e.Object))
                 {
                     throw new PersisterException();
                 }

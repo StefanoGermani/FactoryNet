@@ -13,11 +13,11 @@ namespace FactoryNet.Tests
         [SetUp]
         public void SetUp()
         {
-            _persister = MockRepository.GenerateMock<IPersisterSeed>();
+            _persister = MockRepository.GenerateMock<IPersister>();
             _factory = new PersisterFactory(_persister);
         }
 
-        private IPersisterSeed _persister;
+        private IPersister _persister;
         private IFactory _factory;
 
         [Test]

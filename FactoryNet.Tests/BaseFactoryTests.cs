@@ -42,7 +42,7 @@ namespace FactoryNet.Tests
             _factory.Define(() => new House { Color = "blue", SquareFoot = 50 });
             _factory.Define(() => new Person { FirstName = "Leo" });
 
-            _factory.BluePrintCreated += (sender, e) => dummy.Test();
+            _factory.ObjectCreated += (sender, e) => dummy.Test();
             _factory.Create<House>();
             _factory.Create<Person>();
 

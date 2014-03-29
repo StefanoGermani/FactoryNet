@@ -10,7 +10,7 @@ namespace FactoryNet.Core.Dictionaries
         T Get<T>(string varation);
     }
 
-    internal class CreatedBlueprints : BaseObject<object>, ICreatedBlueprints
+    internal class CreatedBlueprints : BaseList<object>, ICreatedBlueprints
     {
         public void Add<T>(string variation, T createdObject)
         {

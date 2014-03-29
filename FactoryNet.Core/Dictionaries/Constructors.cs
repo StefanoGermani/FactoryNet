@@ -14,7 +14,7 @@ namespace FactoryNet.Core.Dictionaries
         bool ContainsKey(string variation, Type type);
     }
 
-    internal class Constructors : BaseObject<NewExpression>, IConstructors
+    internal class Constructors : BaseList<NewExpression>, IConstructors
     {
     }
 }

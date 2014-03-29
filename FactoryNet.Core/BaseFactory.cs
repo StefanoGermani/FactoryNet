@@ -27,7 +27,7 @@ namespace FactoryNet.Core
         }
     }
 
-    public delegate void BluePrintCreatedEventHandler(object sender, ObjectEventArgs e);
+    public delegate void ObjectCreatedEventHandler(object sender, ObjectEventArgs e);
     public delegate void ObjectDeletedEventHandler(object sender, ObjectEventArgs e);
 
     #endregion
@@ -60,13 +60,13 @@ namespace FactoryNet.Core
 
         #region Events
 
-        public event BluePrintCreatedEventHandler BluePrintCreated;
+        public event ObjectCreatedEventHandler ObjectCreated;
         public event ObjectDeletedEventHandler ObjectDeleted;
 
         protected virtual void OnBluePrintCreated(ObjectEventArgs e)
         {
-            if (BluePrintCreated != null)
-                BluePrintCreated(this, e);
+            if (ObjectCreated != null)
+                ObjectCreated(this, e);
         }
 
         protected virtual void OnObjectDeleted(ObjectEventArgs e)

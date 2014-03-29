@@ -43,7 +43,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dictionaries\BaseObject.cs" />
+    <Compile Include="Dictionaries\BaseList.cs" />
     <Compile Include="Exceptions\WrongDefinitionTypeException.cs" />
     <Compile Include="BaseFactory.cs" />
     <Compile Include="Dictionaries\CreatedBlueprints.cs" />
@@ -55,7 +55,7 @@
     <Compile Include="Dictionaries\Properties.cs" />
     <Compile Include="Dictionaries\Sequences.cs" />
     <Compile Include="Dictionaries\PostCreationActions.cs" />
-    <Compile Include="IPersisterSeed.cs" />
+    <Compile Include="IPersister.cs" />
     <Compile Include="IFactory.cs" />
     <Compile Include="IBlueprint.cs" />
     <Compile Include="FactoryNetModule.cs" />
