@@ -24,7 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>3</LangVersion>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,6 +40,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
@@ -50,6 +51,7 @@
     <Compile Include="Dictionaries\Constructors.cs" />
     <Compile Include="Exceptions\DuplicateBlueprintException.cs" />
     <Compile Include="Helpers\ConstructorHelper.cs" />
+    <Compile Include="Helpers\LoaderHelper.cs" />
     <Compile Include="PersisterFactory.cs" />
     <Compile Include="Exceptions\PersisterException.cs" />
     <Compile Include="Dictionaries\Properties.cs" />

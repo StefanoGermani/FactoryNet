@@ -35,6 +35,7 @@ namespace FactoryNet.Core
     public class BaseFactory : IFactory
     {
         private readonly IConstructorHelper _constructorHelper;
+        private readonly ILoaderHelper _loader;
 
         private readonly IConstructors _costructors;
         private readonly IProperties _properties;
@@ -46,16 +47,15 @@ namespace FactoryNet.Core
 
         public BaseFactory()
         {
-            var kernel = new StandardKernel(new FactoryNetModule());
-
-            _constructorHelper = kernel.Get<IConstructorHelper>();
-            _costructors = kernel.Get<IConstructors>();
-            _properties = kernel.Get<IProperties>();
-            _sequenceValues = kernel.Get<ISequences>();
-            _postCreationActions = kernel.Get<IPostCreationActions>();
-            _createdBluePrints = kernel.Get<ICreatedBlueprints>();
+            _constructorHelper = new ConstructorHelper();
+            _costructors = new Constructors();
+            _properties = new Properties();
+            _sequenceValues = new Sequences();
+            _postCreationActions = new PostCreationActions();
+            _createdBluePrints = new CreatedBlueprints();
 
             _createdObjects = new List<object>();
+            _loader = new LoaderHelper(this);
         }
 
         #region Events
@@ -96,22 +96,12 @@ namespace FactoryNet.Core
 
         public IList<object> CreatedObjects { get { return _createdObjects; } }
 
-        public virtual T Build<T>()
-        {
-            return Build<T>(string.Empty, null);
-        }
-
-        public virtual T Build<T>(string variation)
-        {
-            return Build<T>(variation, null);
-        }
-
         public virtual T Build<T>(Action<T> userSpecifiedProperties)
         {
             return Build(string.Empty, userSpecifiedProperties);
         }
 
-        public virtual T Build<T>(string variation, Action<T> userSpecifiedProperties)
+        public virtual T Build<T>(string variation = "", Action<T> userSpecifiedProperties = null)
         {
             var constructedObject = _constructorHelper.CreateInstance<T>(_costructors.Get<T>(variation));
 
@@ -145,21 +135,6 @@ namespace FactoryNet.Core
             return constructedObject;
         }
 
-        public virtual T Create<T>()
-        {
-            return Create<T>(string.Empty, null);
-        }
-
-        public virtual T Create<T>(string variation)
-        {
-            return Create<T>(variation, null);
-        }
-
-        public virtual T Create<T>(Action<T> userSpecifiedProperties)
-        {
-            return Create(string.Empty, userSpecifiedProperties);
-        }
-
         //public T Create<T>(Expression<Func<T>> definition)
         //{
         //    //throw new NotImplementedException();
@@ -186,7 +161,12 @@ namespace FactoryNet.Core
         //    return _constructorHelper.CreateInstance<T>(newExpression);
         //}
 
-        public virtual T Create<T>(string variation, Action<T> userSpecifiedProperties)
+        public virtual T Create<T>(Action<T> userSpecifiedProperties)
+        {
+            return Create(string.Empty, userSpecifiedProperties);
+        }
+
+        public virtual T Create<T>(string variation = "", Action<T> userSpecifiedProperties = null)
         {
             T constructedObject = Build(variation, userSpecifiedProperties);
 
@@ -203,22 +183,12 @@ namespace FactoryNet.Core
             return constructedObject;
         }
 
-        public virtual void Define<T>(Expression<Func<T>> definition)
-        {
-            Define(string.Empty, definition);
-        }
-
-        public virtual void Define<T>(string variation, Expression<Func<T>> definition)
-        {
-            Define(variation, definition, null);
-        }
-
-        public virtual void Define<T>(Expression<Func<T>> definition, Action<T> afterCreation)
+        public virtual void Define<T>(Expression<Func<T>> definition, Action<T> afterCreation = null)
         {
             Define(string.Empty, definition, afterCreation);
         }
 
-        public virtual void Define<T>(string variation, Expression<Func<T>> definition, Action<T> afterCreation)
+        public virtual void Define<T>(string variation, Expression<Func<T>> definition, Action<T> afterCreation = null)
         {
             if (_costructors.ContainsKey<T>(variation))
                 throw new DuplicateBlueprintException(typeof(T), variation);
@@ -253,37 +223,6 @@ namespace FactoryNet.Core
             }
 
             _createdObjects.Clear();
-        }
-
-        public IFactory LoadBlueprintsFromCurrentAssembly()
-        {
-            var blueprintTypes = Assembly.GetCallingAssembly().GetTypes().Where(t => t.IsClass && typeof(IBlueprint).IsAssignableFrom(t));
-            blueprintTypes.ToList().ForEach(blueprintType =>
-            {
-                var blueprint = (IBlueprint)Activator.CreateInstance(blueprintType);
-                blueprint.SetupPlant(this);
-            });
-
-            return this;
-        }
-
-        public IFactory LoadBlueprintsFromAssembly(Assembly assembly)
-        {
-            var blueprintTypes = assembly.GetTypes().Where(t => t.IsClass && typeof(IBlueprint).IsAssignableFrom(t));
-            blueprintTypes.ToList().ForEach(blueprintType =>
-            {
-                var blueprint = (IBlueprint)Activator.CreateInstance(blueprintType);
-                blueprint.SetupPlant(this);
-            });
-
-            return this;
-        }
-
-        public IFactory LoadBlueprintsFromAssemblies()
-        {
-            AppDomain.CurrentDomain.GetAssemblies().ToList().ForEach(t => LoadBlueprintsFromAssembly(t));
-
-            return this;
         }
 
         private void SetProperties<T>(IDictionary<PropertyData, Expression> properties, T instance)
@@ -326,6 +265,21 @@ namespace FactoryNet.Core
                         propertyInfo.SetValue(instance, compiled.DynamicInvoke(null), null);
                     }
                 });
+        }
+
+        public IFactory LoadBlueprintsFromAssembly(Assembly assembly)
+        {
+            return _loader.LoadBlueprintsFromAssembly(assembly);
+        }
+
+        public IFactory LoadBlueprintsFromAssemblies()
+        {
+            return _loader.LoadBlueprintsFromAssemblies();
+        }
+
+        public IFactory LoadBlueprintsFromCurrentAssembly()
+        {
+            return _loader.LoadBlueprintsFromCurrentAssembly(Assembly.GetCallingAssembly());
         }
     }
 }
