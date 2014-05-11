@@ -35,24 +35,27 @@ namespace FactoryNet.Core
     {
         private readonly IConstructorHelper _constructorHelper;
         private readonly ILoaderHelper _loader;
+        private readonly IPropertyHelper _propertyHelper;
 
         private readonly IConstructors _costructors;
         private readonly IProperties _properties;
-        private readonly ISequences _sequenceValues;
         private readonly IPostCreationActions _postCreationActions;
 
         private readonly List<object> _createdObjects;
 
         public BaseFactory()
         {
-            _constructorHelper = new ConstructorHelper();
-            _costructors = new Constructors();
-            _properties = new Properties();
-            _sequenceValues = new Sequences();
-            _postCreationActions = new PostCreationActions();
+            
 
             _createdObjects = new List<object>();
             _loader = new LoaderHelper(this);
+            _propertyHelper = new PropertyHelper();
+
+            _constructorHelper = new ConstructorHelper();
+            _costructors = new Constructors();
+            _properties = new Properties(_propertyHelper);
+            
+            _postCreationActions = new PostCreationActions();
         }
 
         #region Events
@@ -77,17 +80,17 @@ namespace FactoryNet.Core
 
         public IList<object> CreatedObjects { get { return _createdObjects; } }
 
-        public virtual T Build<T>(Action<T> userSpecifiedProperties)
+        public virtual T Build<T>(Action<T> userSpecifiedProperties) where T : class
         {
             return Build(string.Empty, userSpecifiedProperties);
         }
 
-        public virtual T Build<T>(string variation = "", Action<T> userSpecifiedProperties = null)
+        public virtual T Build<T>(string variation = "", Action<T> userSpecifiedProperties = null) where T :class 
         {
             var constructedObject = _constructorHelper.CreateInstance<T>(_costructors.Get<T>(variation));
 
             if (_properties.ContainsKey<T>(variation))
-                SetProperties(_properties.Get<T>(variation), constructedObject);
+                _propertyHelper.SetProperties(_properties.Get<T>(variation), constructedObject);
 
             if (userSpecifiedProperties != null)
             {
@@ -116,7 +119,7 @@ namespace FactoryNet.Core
             return constructedObject;
         }
 
-        public T Create<T>(Expression<Func<T>> definition)
+        public T Create<T>(Expression<Func<T>> definition) where T : class
         {
             //throw new NotImplementedException();
             NewExpression newExpression;
@@ -142,12 +145,12 @@ namespace FactoryNet.Core
             return _constructorHelper.CreateInstance<T>(newExpression);
         }
 
-        public virtual T Create<T>(Action<T> userSpecifiedProperties)
+        public virtual T Create<T>(Action<T> userSpecifiedProperties) where T : class
         {
             return Create(string.Empty, userSpecifiedProperties);
         }
 
-        public virtual T Create<T>(string variation = "", Action<T> userSpecifiedProperties = null)
+        public virtual T Create<T>(string variation = "", Action<T> userSpecifiedProperties = null) where T : class
         {
             T constructedObject = Build(variation, userSpecifiedProperties);
 
@@ -161,12 +164,12 @@ namespace FactoryNet.Core
             return constructedObject;
         }
 
-        public virtual void Define<T>(Expression<Func<T>> definition, Action<T> afterCreation = null)
+        public virtual void Define<T>(Expression<Func<T>> definition, Action<T> afterCreation = null) where T : class
         {
             Define(string.Empty, definition, afterCreation);
         }
 
-        public virtual void Define<T>(string variation, Expression<Func<T>> definition, Action<T> afterCreation = null)
+        public virtual void Define<T>(string variation, Expression<Func<T>> definition, Action<T> afterCreation = null) where T : class
         {
             if (_costructors.ContainsKey<T>(variation))
                 throw new DuplicateBlueprintException(typeof(T), variation);
@@ -203,47 +206,7 @@ namespace FactoryNet.Core
             _createdObjects.Clear();
         }
 
-        private void SetProperties<T>(IDictionary<PropertyData, Expression> properties, T instance)
-        {
-            properties.Keys.ToList().ForEach(property =>
-                {
-                    PropertyInfo propertyInfo = instance.GetType().GetProperties().FirstOrDefault(prop => prop.Name == property.Name);
-                    if (propertyInfo == null) throw new PropertyNotFoundException(property.Name, properties[property]);
-
-                    var expression = properties[property];
-
-                    MethodCallExpression callExpression;
-
-                    var unaryExpression = expression as UnaryExpression;
-
-                    if (unaryExpression != null)
-                    {
-                        callExpression = unaryExpression.Operand as MethodCallExpression;
-                    }
-                    else
-                    {
-                        callExpression = expression as MethodCallExpression;
-                    }
-
-                    if (callExpression != null && callExpression.Method.DeclaringType == typeof(Sequence))
-                    {
-                        int sequenceNumber = _sequenceValues.GetSequenceValue<T>(propertyInfo);
-
-                        Delegate compiled = ((LambdaExpression)callExpression.Arguments[0]).Compile();
-
-                        var value = Convert.ChangeType(compiled.DynamicInvoke(sequenceNumber), propertyInfo.PropertyType);
-
-                        propertyInfo.SetValue(instance, value, null);
-                    }
-                    else
-                    {
-                        LambdaExpression lambda = Expression.Lambda(expression);
-                        Delegate compiled = lambda.Compile();
-
-                        propertyInfo.SetValue(instance, compiled.DynamicInvoke(null), null);
-                    }
-                });
-        }
+      
 
         public IFactory LoadBlueprintsFromAssembly(Assembly assembly)
         {

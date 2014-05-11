@@ -19,14 +19,14 @@ namespace FactoryNet.Core
         /// </summary>
         IList<object> CreatedObjects { get; }
 
-        T Build<T>(Action<T> userSpecifiedProperties);
-        T Build<T>(string variation = "", Action<T> userSpecifiedProperties = null);
-        T Create<T>(Action<T> userSpecifiedProperties);
-        T Create<T>(string variation = "", Action<T> userSpecifiedProperties = null);
-        T Create<T>(Expression<Func<T>> definition);
+        T Build<T>(Action<T> userSpecifiedProperties) where T : class;
+        T Build<T>(string variation = "", Action<T> userSpecifiedProperties = null) where T : class;
+        T Create<T>(Action<T> userSpecifiedProperties) where T : class;
+        T Create<T>(string variation = "", Action<T> userSpecifiedProperties = null) where T : class;
+        T Create<T>(Expression<Func<T>> definition) where T : class;
 
-        void Define<T>(Expression<Func<T>> definition, Action<T> afterCreation = null);
-        void Define<T>(string variation, Expression<Func<T>> definition, Action<T> afterCreation = null);
+        void Define<T>(Expression<Func<T>> definition, Action<T> afterCreation = null) where T : class;
+        void Define<T>(string variation, Expression<Func<T>> definition, Action<T> afterCreation = null) where T : class;
 
         void ClearCreatedObjects();
     }

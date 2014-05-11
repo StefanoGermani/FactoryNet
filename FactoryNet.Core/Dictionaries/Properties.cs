@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using FactoryNet.Core.Helpers;
 
 namespace FactoryNet.Core.Dictionaries
@@ -16,17 +13,18 @@ namespace FactoryNet.Core.Dictionaries
 
     internal class Properties : BaseList<IDictionary<PropertyData, Expression>>, IProperties
     {
+        private readonly IPropertyHelper _propertyHelper;
+
+        public Properties(IPropertyHelper propertyHelper)
+        {
+            _propertyHelper = propertyHelper;
+        }
+
         public void Add<T>(string variation, IEnumerable<MemberBinding> defaults)
         {
-            base.Add<T>(variation, ToPropertyList(defaults));
+            base.Add<T>(variation, _propertyHelper.ToPropertyList(defaults));
         }
 
-        private IDictionary<PropertyData, Expression> ToPropertyList(IEnumerable<MemberBinding> defaults)
-        {
-            if (defaults == null) return new Dictionary<PropertyData, Expression>();
-
-            return defaults.ToDictionary(memberBinding => new PropertyData((PropertyInfo) memberBinding.Member),
-                                         memberBinding => ((MemberAssignment) memberBinding).Expression);
-        }
+       
     }
 }
