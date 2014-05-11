@@ -6,7 +6,6 @@ using System.Reflection;
 using FactoryNet.Core.Dictionaries;
 using FactoryNet.Core.Exceptions;
 using FactoryNet.Core.Helpers;
-using Ninject;
 
 namespace FactoryNet.Core
 {
@@ -41,7 +40,6 @@ namespace FactoryNet.Core
         private readonly IProperties _properties;
         private readonly ISequences _sequenceValues;
         private readonly IPostCreationActions _postCreationActions;
-        private readonly ICreatedBlueprints _createdBluePrints;
 
         private readonly List<object> _createdObjects;
 
@@ -52,7 +50,6 @@ namespace FactoryNet.Core
             _properties = new Properties();
             _sequenceValues = new Sequences();
             _postCreationActions = new PostCreationActions();
-            _createdBluePrints = new CreatedBlueprints();
 
             _createdObjects = new List<object>();
             _loader = new LoaderHelper(this);
@@ -155,9 +152,6 @@ namespace FactoryNet.Core
             T constructedObject = Build(variation, userSpecifiedProperties);
 
             OnBluePrintCreated(new ObjectEventArgs(constructedObject));
-
-            if (!_createdBluePrints.ContainsKey<T>(variation))
-                _createdBluePrints.Add(variation, constructedObject);
 
             _createdObjects.Add(constructedObject);
 
