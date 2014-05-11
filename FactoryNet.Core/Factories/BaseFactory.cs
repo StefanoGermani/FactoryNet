@@ -78,22 +78,6 @@ namespace FactoryNet.Core
 
         #endregion
 
-        public virtual T CreateForChild<T>()
-        {
-            T constructedObject;
-
-            if (_createdBluePrints.ContainsKey<T>(string.Empty))
-            {
-                constructedObject = _createdBluePrints.Get<T>(string.Empty);
-            }
-            else
-            {
-                constructedObject = Create<T>();
-            }
-                
-            return constructedObject;
-        }
-
         public IList<object> CreatedObjects { get { return _createdObjects; } }
 
         public virtual T Build<T>(Action<T> userSpecifiedProperties)
@@ -115,51 +99,51 @@ namespace FactoryNet.Core
 
             // We should check if for the object properties we have a creation strategy and call create on that one.
             // Also if the property has a value, don't override.
-            foreach (PropertyInfo prop in constructedObject.GetType().GetProperties())
-            {
-                if (!_costructors.ContainsKey(variation, prop.PropertyType) || prop.GetValue(constructedObject, null) != null)
-                    continue;
+            //foreach (PropertyInfo prop in constructedObject.GetType().GetProperties())
+            //{
+            //    if (!_costructors.ContainsKey(variation, prop.PropertyType) || prop.GetValue(constructedObject, null) != null)
+            //        continue;
 
-                // check if property has a setter
-                if (prop.GetSetMethod() == null)
-                    continue;
+            //    // check if property has a setter
+            //    if (prop.GetSetMethod() == null)
+            //        continue;
 
-                object value = GetType().
-                    GetMethod("CreateForChild").
-                    MakeGenericMethod(prop.PropertyType).
-                    Invoke(this, null);
+            //    object value = GetType().
+            //        GetMethod("CreateForChild").
+            //        MakeGenericMethod(prop.PropertyType).
+            //        Invoke(this, null);
 
-                prop.SetValue(constructedObject, value, null);
-            }
+            //    prop.SetValue(constructedObject, value, null);
+            //}
 
             return constructedObject;
         }
 
-        //public T Create<T>(Expression<Func<T>> definition)
-        //{
-        //    //throw new NotImplementedException();
-        //    NewExpression newExpression;
+        public T Create<T>(Expression<Func<T>> definition)
+        {
+            //throw new NotImplementedException();
+            NewExpression newExpression;
 
-        //    switch (definition.Body.NodeType)
-        //    {
-        //        case ExpressionType.MemberInit:
-        //            {
-        //                //var memberInitExpression = ((MemberInitExpression)definition.Body);
-        //                newExpression = ((MemberInitExpression) definition.Body).NewExpression;
-        //                //_properties.Add<T>(variation, memberInitExpression.Bindings);
-        //            }
-        //            break;
-        //        case ExpressionType.New:
-        //            {
-        //                newExpression = (NewExpression)definition.Body;
-        //            }
-        //            break;
-        //        default:
-        //            throw new WrongDefinitionTypeException();
-        //    }
+            switch (definition.Body.NodeType)
+            {
+                case ExpressionType.MemberInit:
+                    {
+                        //var memberInitExpression = ((MemberInitExpression)definition.Body);
+                        newExpression = ((MemberInitExpression)definition.Body).NewExpression;
+                        //_properties.Add<T>(variation, memberInitExpression.Bindings);
+                    }
+                    break;
+                case ExpressionType.New:
+                    {
+                        newExpression = (NewExpression)definition.Body;
+                    }
+                    break;
+                default:
+                    throw new WrongDefinitionTypeException();
+            }
 
-        //    return _constructorHelper.CreateInstance<T>(newExpression);
-        //}
+            return _constructorHelper.CreateInstance<T>(newExpression);
+        }
 
         public virtual T Create<T>(Action<T> userSpecifiedProperties)
         {

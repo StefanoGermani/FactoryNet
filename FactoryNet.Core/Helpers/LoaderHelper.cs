@@ -28,7 +28,7 @@ namespace FactoryNet.Core.Helpers
             blueprintTypes.ToList().ForEach(blueprintType =>
             {
                 var blueprint = (IBlueprint)Activator.CreateInstance(blueprintType);
-                blueprint.SetupPlant(_factory);
+                blueprint.SetupFactory(_factory);
             });
 
             return _factory;
@@ -40,7 +40,7 @@ namespace FactoryNet.Core.Helpers
             blueprintTypes.ToList().ForEach(blueprintType =>
             {
                 var blueprint = (IBlueprint)Activator.CreateInstance(blueprintType);
-                blueprint.SetupPlant(_factory);
+                blueprint.SetupFactory(_factory);
             });
 
             return _factory;

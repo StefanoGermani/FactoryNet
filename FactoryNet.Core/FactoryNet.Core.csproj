@@ -46,13 +46,13 @@
   <ItemGroup>
     <Compile Include="Dictionaries\BaseList.cs" />
     <Compile Include="Exceptions\WrongDefinitionTypeException.cs" />
-    <Compile Include="BaseFactory.cs" />
+    <Compile Include="Factories\BaseFactory.cs" />
     <Compile Include="Dictionaries\CreatedBlueprints.cs" />
     <Compile Include="Dictionaries\Constructors.cs" />
     <Compile Include="Exceptions\DuplicateBlueprintException.cs" />
     <Compile Include="Helpers\ConstructorHelper.cs" />
     <Compile Include="Helpers\LoaderHelper.cs" />
-    <Compile Include="PersisterFactory.cs" />
+    <Compile Include="Factories\PersisterFactory.cs" />
     <Compile Include="Exceptions\PersisterException.cs" />
     <Compile Include="Dictionaries\Properties.cs" />
     <Compile Include="Dictionaries\Sequences.cs" />

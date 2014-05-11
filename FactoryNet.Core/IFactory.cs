@@ -23,6 +23,7 @@ namespace FactoryNet.Core
         T Build<T>(string variation = "", Action<T> userSpecifiedProperties = null);
         T Create<T>(Action<T> userSpecifiedProperties);
         T Create<T>(string variation = "", Action<T> userSpecifiedProperties = null);
+        T Create<T>(Expression<Func<T>> definition);
 
         void Define<T>(Expression<Func<T>> definition, Action<T> afterCreation = null);
         void Define<T>(string variation, Expression<Func<T>> definition, Action<T> afterCreation = null);
