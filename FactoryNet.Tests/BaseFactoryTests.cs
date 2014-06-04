@@ -214,7 +214,7 @@ namespace FactoryNet.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(WrongDefinitionTypeException))]
+        [ExpectedException(typeof(ExpressionTypeNotSupportedException))]
         public void Should_Throw_Exception_If_Not_An_MemberInit_Or_New_Function()
         {
             _factory.Define(() => string.Empty);

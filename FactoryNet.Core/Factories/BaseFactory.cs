@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using FactoryNet.Core.Dictionaries;
@@ -45,8 +44,6 @@ namespace FactoryNet.Core
 
         public BaseFactory()
         {
-            
-
             _createdObjects = new List<object>();
             _loader = new LoaderHelper(this);
             _propertyHelper = new PropertyHelper();
@@ -139,7 +136,7 @@ namespace FactoryNet.Core
                     }
                     break;
                 default:
-                    throw new WrongDefinitionTypeException();
+                    throw new ExpressionTypeNotSupportedException();
             }
 
             return _constructorHelper.CreateInstance<T>(newExpression);
@@ -189,7 +186,7 @@ namespace FactoryNet.Core
                     }
                     break;
                 default:
-                    throw new WrongDefinitionTypeException();
+                    throw new ExpressionTypeNotSupportedException();
             }
 
             if (afterCreation != null)
@@ -207,7 +204,6 @@ namespace FactoryNet.Core
         }
 
       
-
         public IFactory LoadBlueprintsFromAssembly(Assembly assembly)
         {
             return _loader.LoadBlueprintsFromAssembly(assembly);

@@ -8,14 +8,13 @@ namespace FactoryNet.Tests
     [TestFixture]
     public class BaseFactoryVariationsTests
     {
+        private IFactory _factory;
+
         [SetUp]
         public void SetUp()
         {
             _factory = new BaseFactory();
         }
-
-        private IFactory _factory;
-
 
         [Test]
         public void Should_Create_Variation_Of_Specified_Type()
@@ -42,24 +41,16 @@ namespace FactoryNet.Tests
         [Test]
         public void Should_Create_Variation_With_Extension()
         {
-            _factory.Define(() => new House { Color = "blue" }, OnPropertyPopulation);
-            _factory.Define("My", () => new House { Color = "My" }, OnPropertyPopulationVariation);
+            _factory.Define(() => new House { Color = "blue" }, h => h.Persons.Add(new Person { FirstName = "Pablo" }));
+            _factory.Define("My", () => new House { Color = "My" }, h =>
+            {
+                h.Persons.Clear();
+                h.Persons.Add(new Person { FirstName = "Pedro" });
+            });
 
             Assert.AreEqual(_factory.Create<House>().Persons.First().FirstName, "Pablo");
             Assert.AreEqual(_factory.Create<House>("My").Persons.First().FirstName, "Pedro");
         }
-
-        private static void OnPropertyPopulation(House h)
-        {
-            h.Persons.Add(new Person { FirstName = "Pablo" });
-        }
-
-        private static void OnPropertyPopulationVariation(House h)
-        {
-            h.Persons.Clear();
-            h.Persons.Add(new Person { FirstName = "Pedro" });
-        }
-
 
     }
 }
